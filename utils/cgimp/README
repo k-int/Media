@@ -1,0 +1,7 @@
+ 
+
+Initially, we need to ingest files from 
+
+http://www.culturegrid.org.uk/discover/xsl/default?operation=searchRetrieve&startRecord=1&query=fullText%20any%20%22*%22%20AND%20(dcterms.isPartOf%20adj%20%22NCMG%22)&x-facet=default&maximumRecords=10&version=1.1
+
+
