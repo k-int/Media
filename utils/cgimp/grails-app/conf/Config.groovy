@@ -74,6 +74,11 @@ log4j = {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
 
+    appenders {
+        console name: "stdout", threshold: org.apache.log4j.Level.ALL
+    }
+
+
     error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
            'org.codehaus.groovy.grails.web.pages', //  GSP
            'org.codehaus.groovy.grails.web.sitemesh', //  layouts
@@ -85,6 +90,13 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+
+    debug  'grails.app.controller.com.k_int',
+           'grails.app.service.com.k_int',
+           'grails.app.domain.com.k_int',
+           'grails.app.com.k_int',
+           'grails.app',
+           'com.k_int'
 
     warn   'org.mortbay.log'
 }
