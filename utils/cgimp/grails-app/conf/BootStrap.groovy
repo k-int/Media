@@ -25,12 +25,20 @@ class BootStrap {
           Object h = clazz.newInstance();
 
           log.debug("Looking up agent ${h.getAgentName()}");
-          Agent agent = Agent.findByAgentName(h.getAgentName()) ?: new Agent(
-                                                                            agentName:h.getAgentName(),
-                                                                            agentCode:agent_file.text,
-                                                                            lastRun:null,
-                                                                            nextDue:null,
-                                                                            interval:86400).save();
+          Agent agent = Agent.findByAgentName(h.getAgentName())
+          if ( agent == null ) {
+            agent = new Agent(agentName:h.getAgentName(),
+                              agentCode:agent_file.text,
+                              lastRun:null,
+                              nextDue:null,
+                              interval:86400)
+            if ( agent.save(flush:true) ) {
+              log.debug("Agent save ok");
+            }
+            else {
+              log.error("Problem saving agent ${agent.errors}");
+            }
+          }
         }
       }
 

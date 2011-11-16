@@ -17,5 +17,7 @@ class Agent {
 
   static constraints = {
     agentCode(maxSize:1000000)
+    lastRun(nullable:true)
+    nextDue(nullable:true)
   }
 }
