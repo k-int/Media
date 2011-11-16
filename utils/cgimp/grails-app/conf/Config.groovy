@@ -96,7 +96,8 @@ log4j = {
            'grails.app.domain.com.k_int',
            'grails.app.com.k_int',
            'grails.app',
-           'com.k_int'
+           'com.k_int',
+           'grails.app.jobs'
 
     warn   'org.mortbay.log'
 }
