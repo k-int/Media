@@ -2,6 +2,7 @@ import org.springframework.core.io.Resource
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.apache.shiro.crypto.hash.Sha256Hash
 import grails.util.GrailsUtil
+import com.k_int.gatherer.*
 
 
 class BootStrap {
@@ -23,11 +24,13 @@ class BootStrap {
           Class clazz = gcl.parseClass(agent_file.text);
           Object h = clazz.newInstance();
 
-          // log.debug("Loading handler: ${h.getHandlerName()} revision: ${h.getRevision()}, preconditions: ${h.getPreconditions()}");
-          // def nh = Handler.findByName(h.getHandlerName()) ?: new Handler(name:h.getHandlerName(), preconditions:h.getPreconditions()).save()
-          // def nr = new HandlerRevision(owner:nh,
-          //                              revision:h.getRevision(),
-          //                              handler:handler_file.text).save();
+          log.debug("Looking up agent ${h.getAgentName()}");
+          Agent agent = Agent.findByAgentName(h.getAgentName()) ?: new Agent(
+                                                                            agentName:h.getAgentName(),
+                                                                            agentCode:agent_file.text,
+                                                                            lastRun:null,
+                                                                            nextDue:null,
+                                                                            interval:86400).save();
         }
       }
 

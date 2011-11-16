@@ -9,6 +9,13 @@ package com.k_int.gatherer
 
 class Agent {
 
-    static constraints = {
-    }
+  String agentName
+  String agentCode
+  Date lastRun
+  Date nextDue
+  long interval
+
+  static constraints = {
+    agentCode(maxSize:1000000)
+  }
 }
