@@ -22,8 +22,8 @@ class ncmgAgent {
     1
   }
 
-  def process(properties, ctx) {
-    println "This is the NCMG agent code......."
+  def process(properties, ctx, log) {
+    println "This is the NCMG agent code.......process..."
 
     // Get a handle to the local mongo service
     def mongo = new com.gmongo.GMongo();
@@ -44,7 +44,7 @@ class ncmgAgent {
     solr_params.set("rows", "50");
 
     println "solr params : ${solr_params}"
-    QueryResponse response = solrServerBean.query(solr_params);
+    QueryResponse response = solr_instance.query(solr_params);
     SolrDocumentList sdl = response.getResults();
     int start = 0;
 
@@ -57,7 +57,7 @@ class ncmgAgent {
 
       // Load next batch
       solr_params.set("start", start);
-      response = solrServerBean.query(solr_params);
+      response = solr_instance.query(solr_params);
       sdl = response.getResults();
     }
 

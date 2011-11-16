@@ -1,9 +1,12 @@
 package cgimp
 
+import org.springframework.context.*
+
 class GatherJob {
 
     // def timeout = 5000l // execute job once in 5 seconds
     def concurrent = false
+    ApplicationContext applicationContext
 
     static triggers = {
       cron name:'cronTrigger', startDelay:10000, cronExpression: "0 0/2 * * * ?"
@@ -13,10 +16,15 @@ class GatherJob {
     }
 
     def execute() {
+
       // execute task
       log.debug("Execute gatherer job");
       com.k_int.gatherer.Agent.findAll().each { agent ->
         log.debug("Processing agent ${agent.agentName}");
+        Class clazz = new GroovyClassLoader(this.class.getClassLoader()).parseClass(agent.agentCode);
+        def ai = clazz.newInstance();
+        def props = [:]
+        ai.process(props, applicationContext, log);
       }
       log.debug("GatherJob completed");
     }
