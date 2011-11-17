@@ -86,7 +86,7 @@ class ncmgAgent {
       db.records.save(local_info);
     }
     else {
-      log.debug("found ${rec['aggregator.internal.id']}");
+      log.debug("found ${rec['aggregator.internal.id']}, image is at ${rec['dc.related.link']}");
     }
   }
 }
