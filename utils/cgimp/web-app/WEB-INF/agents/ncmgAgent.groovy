@@ -57,6 +57,7 @@ class ncmgAgent {
       log.debug("Processing ${response.getResults().size()}");
       response.getResults().each{ rec ->
         start++
+        processEntry(rec, db, log);
         // log.debug("${rec['aggregator.internal.id']}");
       }
 
@@ -72,5 +73,20 @@ class ncmgAgent {
     }
 
     db.agents.save(ncmg_gatherer_agent_info);
+  }
+
+  // http://localhost:28017/gatherer/records/?limit=1 to see an example record in the mongo http interface
+  def processEntry(rec, db, log) {
+    // rec['aggregator.internal.id'], rec['dc.related.link'], 
+    def local_info = db.records.findOne(identifier: rec['aggregator.internal.id'])
+    if ( local_info == null ) {
+      local_info = [:]
+      local_info.identifier=rec['aggregator.internal.id']
+      local_info.descriptive_record=rec
+      db.records.save(local_info);
+    }
+    else {
+      log.debug("found ${rec['aggregator.internal.id']}");
+    }
   }
 }
