@@ -39,26 +39,36 @@ class ncmgAgent {
     def solr_instance = new org.apache.solr.client.solrj.impl.CommonsHttpSolrServer("http://www.culturegrid.org.uk/index")
 
     ModifiableSolrParams solr_params = new ModifiableSolrParams();
-    solr_params.set("q", "record_type:institution AND institution_sector:Museums")
+    // solr_params.set("q", "record_type:institution AND institution_sector:Museums")
+    solr_params.set("q", 'dcterms.isPartOf adj "NCMG"')
     solr_params.set("start", 0);
     solr_params.set("rows", "50");
 
     println "solr params : ${solr_params}"
     QueryResponse response = solr_instance.query(solr_params);
+
     SolrDocumentList sdl = response.getResults();
+    int record_count = sdl.getNumFound();
+    log.debug("Query returns ${record_count} documents for NCMG");
+
     int start = 0;
 
-    while ( response.getResults().size() > 0 ) {
+    while ( ( response.getResults().size() > 0 ) && ( start < record_count ) ) {
       log.debug("Processing ${response.getResults().size()}");
       response.getResults().each{ rec ->
         start++
-        log.debug("${rec['aggregator.internal.id']}");
+        // log.debug("${rec['aggregator.internal.id']}");
       }
 
+      log.debug("Processed ${start} out of ${record_count}");
+
       // Load next batch
-      solr_params.set("start", start);
-      response = solr_instance.query(solr_params);
-      sdl = response.getResults();
+      if ( start < record_count ) {
+        log.debug("Requesting 50 from ${start}");
+        solr_params.set("start", start);
+        response = solr_instance.query(solr_params);
+        sdl = response.getResults();
+      }
     }
 
     db.agents.save(ncmg_gatherer_agent_info);

@@ -17,8 +17,10 @@ class GatherJob {
 
     def execute() {
 
+      def start_time = System.currentTimeMillis();
+
       // execute task
-      log.debug("Execute gatherer job");
+      log.debug("Execute gatherer job starting at ${new Date()}");
       com.k_int.gatherer.Agent.findAll().each { agent ->
         log.debug("Processing agent ${agent.agentName}");
         Class clazz = new GroovyClassLoader(this.class.getClassLoader()).parseClass(agent.agentCode);
@@ -26,6 +28,9 @@ class GatherJob {
         def props = [:]
         ai.process(props, applicationContext, log);
       }
-      log.debug("GatherJob completed");
+
+      def elapsed = System.currentTimeMillis() - start_time;
+
+      log.debug("GatherJob completed in ${elapsed}ms at ${new Date()}");
     }
 }
