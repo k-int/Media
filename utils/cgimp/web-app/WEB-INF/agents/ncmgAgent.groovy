@@ -10,8 +10,11 @@ import groovy.text.Template
 import groovy.text.SimpleTemplateEngine
 import groovy.xml.MarkupBuilder
 import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.apache.commons.logging.LogFactory
 
 class ncmgAgent {
+
+  private static final log = LogFactory.getLog(this)
   
   // handlers have access to the repository mongo service.. suggest you use http://blog.paulopoiati.com/2010/06/20/gmongo-0-5-released/
   def getAgentName() {
@@ -22,7 +25,9 @@ class ncmgAgent {
     1
   }
 
-  def process(properties, ctx, log) {
+  def process(properties, ctx) {
+
+    
     println "This is the NCMG agent code.......process..."
 
     // Get a handle to the local mongo service

@@ -26,7 +26,7 @@ class GatherJob {
         Class clazz = new GroovyClassLoader(this.class.getClassLoader()).parseClass(agent.agentCode);
         def ai = clazz.newInstance();
         def props = [:]
-        ai.process(props, applicationContext, log);
+        ai.process(props, applicationContext)
       }
 
       def elapsed = System.currentTimeMillis() - start_time;
