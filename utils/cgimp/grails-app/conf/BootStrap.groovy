@@ -39,6 +39,7 @@ class BootStrap {
               log.error("Problem saving agent ${agent.errors}");
             }
           }
+          log.debug("Loaded ${agent_file}");
         }
       }
 

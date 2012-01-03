@@ -22,6 +22,10 @@ class ncmgAgent {
     1
   }
 
+  def isActive() {
+    return false
+  }
+
   def process(properties, ctx, log) {
     println "This is the NCMG agent code.......process..."
 
