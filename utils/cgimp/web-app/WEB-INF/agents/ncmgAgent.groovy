@@ -6,8 +6,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.*;
 import grails.converters.*
-import groovy.text.Template
-import groovy.text.SimpleTemplateEngine
+// import groovy.text.Template
+// import groovy.text.SimpleTemplateEngine
 import groovy.xml.MarkupBuilder
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.apache.commons.logging.LogFactory
