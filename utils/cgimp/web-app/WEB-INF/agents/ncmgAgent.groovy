@@ -26,7 +26,7 @@ class ncmgAgent {
   }
 
   def isActive() {
-    return false
+    return true
   }
 
   def process(properties, ctx, log) {
