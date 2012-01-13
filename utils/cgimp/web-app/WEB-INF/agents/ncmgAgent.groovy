@@ -11,6 +11,7 @@ import grails.converters.*
 import groovy.xml.MarkupBuilder
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.apache.commons.logging.LogFactory
+import java.util.zip.*;
 
 class ncmgAgent {
 
@@ -61,6 +62,10 @@ class ncmgAgent {
 
     int start = 0;
 
+    // Limit in testing
+    if ( record_count > 100 )
+      record_count = 100;
+
     while ( ( response.getResults().size() > 0 ) && ( start < record_count ) ) {
       log.debug("Processing ${response.getResults().size()}");
       response.getResults().each{ rec ->
@@ -96,5 +101,25 @@ class ncmgAgent {
     else {
       log.debug("found ${rec['aggregator.internal.id']}, image is at ${rec['dc.related.link']}");
     }
+    constructZip(rec)
+  }
+
+  def constructZip(rec) {
+    log.debug("Construct zip");
+    File f = new File("/tmp/t.zip")
+    if ( f.exists() ) {
+      log.debug("Delete existing")
+      f.delete() 
+    }
+    FileOutputStream fos = new FileOutputStream(f)
+    def zipStream = new ZipOutputStream(fos) 
+
+    def file = new File("/tmp/t") 
+    def entry = new ZipEntry(file.name) 
+    zipStream.putNextEntry(entry) 
+    zipStream << file.inputStream
+    zipStream.closeEntry()
+    zipStream.close();
+    log.debug("constructZip Completed");
   }
 }
