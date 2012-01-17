@@ -117,7 +117,7 @@ class ncmgAgent {
     def file = new File("/tmp/t") 
     def entry = new ZipEntry(file.name) 
     zipStream.putNextEntry(entry) 
-    zipStream << file.inputStream
+    zipStream << new FileInputStream(file)
     zipStream.closeEntry()
     zipStream.close();
     log.debug("constructZip Completed");
