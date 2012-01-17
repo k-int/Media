@@ -1,3 +1,5 @@
+package com.k_int.media;
+
 import com.gmongo.GMongo
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -12,6 +14,8 @@ import groovy.xml.MarkupBuilder
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.apache.commons.logging.LogFactory
 import java.util.zip.*;
+import groovy.xml.MarkupBuilder
+
 
 class ncmgAgent {
 
@@ -30,7 +34,7 @@ class ncmgAgent {
     return true
   }
 
-  def process(properties, ctx, log) {
+  def process(properties, ctx, otherlog) {
     
     println "This is the NCMG agent code.......process..."
 
@@ -71,7 +75,9 @@ class ncmgAgent {
       response.getResults().each{ rec ->
         start++
         processEntry(rec, db, log);
-        // log.debug("${rec['aggregator.internal.id']}");
+        log.debug("internal ID: ${rec['aggregator.internal.id']}");
+        def t = test2()
+        log.debug("Result of test2: ${t}");
       }
 
       log.debug("Processed ${start} out of ${record_count}");
@@ -101,11 +107,21 @@ class ncmgAgent {
     else {
       log.debug("found ${rec['aggregator.internal.id']}, image is at ${rec['dc.related.link']}");
     }
-    constructZip(rec)
+    test2();
+    log.debug("Call construct zip");
+    buildXml(rec)
+    // log.debug("Call build zip");
+    // zip(rec)
+    log.debug("done");
   }
 
-  def constructZip(rec) {
-    log.debug("Construct zip");
+  def test2() {
+    log.info("fred");
+    554
+  }
+
+  def zip(rec) {
+    log.debug("Build zip");
     File f = new File("/tmp/t.zip")
     if ( f.exists() ) {
       log.debug("Delete existing")
@@ -122,4 +138,64 @@ class ncmgAgent {
     zipStream.close();
     log.debug("constructZip Completed");
   }
+
+  def buildXml(rec) {
+    log.debug("Build xml");
+    def writer = new StringWriter()
+    def xml = new MarkupBuilder(writer)
+    xml.'description'('xmlns': 'http://purl.org/mla/pnds/pndsdc/',
+                     'xmlns:dc' : 'http://purl.org/dc/elements/1.1/',
+                     'xmlns:dcterms':'http://purl.org/dc/terms/',
+                     'xmlns:e20cl':'http://www.20thcenturylondon.org.uk/',
+                     'xmlns:pnds_dc': 'http://purl.org/mla/pnds/pndsdc/',
+                     'xmlns:pndsterms':'http://purl.org/mla/pnds/terms/',
+                     'xmlns:xsi':'http://www.w3.org/2001/XMLSchema-instance',
+                     'xsi:schemaLocation': 'http://www.peoplesnetwork.gov.uk/schema/CultureGrid_Item http://www.peoplesnetwork.gov.uk/schema/CultureGrid_Item.xsd'  ) {
+      'dc:identifier'('1977-5750')
+      'dc:title'('title')
+      'dc:description'('descr')
+      'dc:publisher'('descr')
+      'dc:type'('descr')
+      'dcterms:rightsholder'('descr')
+      'dc:subject'('subject')
+    }
+    def result_xml = writer.toString()
+    log.debug(result_xml)
+  }
 }
+
+
+/*
+
+<culturegrid_item:description xmlns:culturegrid_item="http://www.peoplesnetwork.gov.uk/schema/CultureGrid_Item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:e20cl="http://www.20thcenturylondon.org.uk" xmlns:pnds_dc="http://purl.org/mla/pnds/pndsdc/" xmlns:pndsterms="http://purl.org/mla/pnds/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.peoplesnetwork.gov.uk/schema/CultureGrid_Item http://www.peoplesnetwork.gov.uk/schema/CultureGrid_Item.xsd">
+<dc:identifier>1977-5750</dc:identifier>
+<dc:title>Painting</dc:title>
+<dc:description>
+Painting. Nairn by S.J. Lamorna Birch. Original painting for LMS poster
+</dc:description>
+<dc:subject>painting</dc:subject>
+<dc:subject>artwork</dc:subject>
+<dc:type encSchemeURI="http://purl.org/dc/terms/DCMIType">PhysicalObject</dc:type>
+<dcterms:license valueURI="http://creativecommons.org/licenses/by-nc-sa/2.5/">Creative Commons Licence</dcterms:license>
+<dcterms:rightsHolder>ScienceMuseum</dcterms:rightsHolder>
+<dcterms:isPartOf>National Railway Museum</dcterms:isPartOf>
+</culturegrid_item:description>
+
+
+<description xmlns="http://purl.org/mla/pnds/pndsdc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:e20cl="http://www.20thcenturylondon.org.uk/" xmlns:pndsterms="http://purl.org/mla/pnds/terms/">
+<dc:identifier>1977-5750</dc:identifier>
+<dc:identifier/>
+<dc:title>Painting</dc:title>
+<dc:description>
+Painting. Nairn by S.J. Lamorna Birch. Original painting for LMS poster
+</dc:description>
+<dc:publisher/>
+<dc:type>PhysicalObject</dc:type>
+<dcterms:rightsHolder/>
+<dcterms:isPartOf>NRM - Pictorial Collection (Railway)</dcterms:isPartOf>
+<dcterms:license valueURI="http://creativecommons.org/licenses/by-nc-sa/2.5/">Creative Commons Licence</dcterms:license>
+<dc:subject>painting</dc:subject>
+<dc:subject>artwork</dc:subject>
+<pndsterms:extension/>
+</description>
+*/
