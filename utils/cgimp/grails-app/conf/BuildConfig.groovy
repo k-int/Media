@@ -31,6 +31,7 @@ grails.project.dependency.resolution = {
         runtime 'mysql:mysql-connector-java:5.1.14'
         runtime 'com.gmongo:gmongo:0.9.2'
         runtime 'org.apache.solr:solr-solrj:1.4.1'
+        runtime 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
         // runtime 'org.apache.solr:solr-solrj:3.5.0'
     }
 }

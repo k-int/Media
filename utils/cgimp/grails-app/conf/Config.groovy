@@ -99,8 +99,10 @@ log4j = {
            'grails.app.domain.com.k_int',
            'grails.app.com.k_int',
            'grails.app',
-           'com.k_int',
-           'grails.app.jobs'
+           'grails.app.jobs',
+           // 'org.apache.http.wire',
+           // 'org.apache.http.headers',
+           'com.k_int'
 
     warn   'org.mortbay.log'
 }

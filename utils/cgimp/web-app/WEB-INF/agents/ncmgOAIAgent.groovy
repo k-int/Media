@@ -15,15 +15,26 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.apache.commons.logging.LogFactory
 import java.util.zip.*;
 import groovy.xml.MarkupBuilder
+import org.springframework.beans.factory.InitializingBean
+import groovy.util.slurpersupport.GPathResult
+import static groovyx.net.http.ContentType.URLENC
+import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.Method.*
+import groovyx.net.http.*
+import org.apache.http.entity.mime.*
+import org.apache.http.entity.mime.content.*
+import java.nio.charset.Charset
+import groovyx.net.http.RESTClient
+import groovy.util.slurpersupport.GPathResult
+import static groovyx.net.http.ContentType.URLENC
 
-
-class ncmgAgent {
+class ncmgOAIAgent {
 
   private static final log = LogFactory.getLog(this)
   
   // handlers have access to the repository mongo service.. suggest you use http://blog.paulopoiati.com/2010/06/20/gmongo-0-5-released/
   def getAgentName() {
-    "Nottinhgam City Museums and Galleries Agent"
+    "Nottinhgam City Museums and Galleries OAI Agent"
   }
 
   def getRevision() {
@@ -31,13 +42,11 @@ class ncmgAgent {
   }
 
   def isActive() {
-    return false
+    return true
   }
 
   def process(properties, ctx, otherlog) {
     
-    println "This is the NCMG agent code.......process..."
-
     // Get a handle to the local mongo service
     def mongo = new com.gmongo.GMongo();
     def db = mongo.getDB("gatherer")
@@ -48,50 +57,47 @@ class ncmgAgent {
       ncmg_gatherer_agent_info = [:]
     }
 
-    // Set up a solr instance we will use to iterate through the entries in the ncmg collection
-    def solr_instance = new org.apache.solr.client.solrj.impl.CommonsHttpSolrServer("http://www.culturegrid.org.uk/index")
+    // def oai_endpoint = new HTTPBuilder( 'http://culturegrid.org.uk/dpp/oai' )
+    def oai_endpoint = new RESTClient( 'http://www.culturegrid.org.uk/dpp/oai' )
+    // oai_endpoint.auth.basic model.dppUser, model.dppPass
 
-    ModifiableSolrParams solr_params = new ModifiableSolrParams();
-    // solr_params.set("q", "record_type:institution AND institution_sector:Museums")
-    solr_params.set("q", 'dcterms.isPartOf:"NCMG"')
-    solr_params.set("start", 0);
-    solr_params.set("rows", "50");
+    fetchOAIPage(oai_endpoint)
 
-    println "solr params : ${solr_params}"
-    QueryResponse response = solr_instance.query(solr_params);
-
-    SolrDocumentList sdl = response.getResults();
-    int record_count = sdl.getNumFound();
-    log.debug("Query returns ${record_count} documents for NCMG");
-
-    int start = 0;
-
-    // Limit in testing
-    if ( record_count > 100 )
-      record_count = 100;
-
-    while ( ( response.getResults().size() > 0 ) && ( start < record_count ) ) {
-      log.debug("Processing ${response.getResults().size()}");
-      response.getResults().each{ rec ->
-        start++
-        processEntry(rec, db, log);
-        log.debug("internal ID: ${rec['aggregator.internal.id']}");
-        def t = test2()
-        log.debug("Result of test2: ${t}");
-      }
-
-      log.debug("Processed ${start} out of ${record_count}");
-
-      // Load next batch
-      if ( start < record_count ) {
-        log.debug("Requesting 50 from ${start}");
-        solr_params.set("start", start);
-        response = solr_instance.query(solr_params);
-        sdl = response.getResults();
-      }
+    // Form an oai request
+    def more_oai_data = false
+    while ( more_oai_data ) {
     }
 
     db.agents.save(ncmg_gatherer_agent_info);
+  }
+
+  def fetchOAIPage(oai_endpoint) {
+    // oai_endpoint.request(GET,XML) {request ->
+    oai_endpoint.request(GET) {request ->
+
+      // uri.path = '/ajax/services/search/web'
+      uri.query = [ 'verb':'ListRecords', 
+                    'metadataPrefix':'pnds_dcap_raw', 
+                    'set' : "PN:NCMG:*" ]  // from, until,...
+
+      request.getParams().setParameter("http.socket.timeout", new Integer(5000))
+      headers.Accept = 'application/xml'
+      // headers.'User-Agent' = 'GroovyHTTPBuilderTest/1.0'
+      // headers.'Referer' = 'http://blog.techstacks.com/'
+      response.success = { resp, xml ->
+        // log.debug( "Server Response: ${resp.statusLine}" )
+        // log.debug( "Server Type: ${resp.getFirstHeader('Server')}" )
+        // log.debug( "content type: ${resp.headers.'Content-Type'}" )
+
+        xml?.ListRecords?.record.each { rec ->
+          log.debug("Record under xml");
+        }
+      }
+
+      response.failure = { resp ->
+        log.debug( resp.statusLine )
+      }
+    }
   }
 
   // http://localhost:28017/gatherer/records/?limit=1 to see an example record in the mongo http interface

@@ -17,13 +17,13 @@ import java.util.zip.*;
 import groovy.xml.MarkupBuilder
 
 
-class ncmgAgent {
+class exampleSolrAgent {
 
   private static final log = LogFactory.getLog(this)
   
   // handlers have access to the repository mongo service.. suggest you use http://blog.paulopoiati.com/2010/06/20/gmongo-0-5-released/
   def getAgentName() {
-    "Nottinhgam City Museums and Galleries Agent"
+    "Example SOLR Agent"
   }
 
   def getRevision() {
@@ -36,7 +36,7 @@ class ncmgAgent {
 
   def process(properties, ctx, otherlog) {
     
-    println "This is the NCMG agent code.......process..."
+    println "This is the example solr harvest agent code.......process..."
 
     // Get a handle to the local mongo service
     def mongo = new com.gmongo.GMongo();
