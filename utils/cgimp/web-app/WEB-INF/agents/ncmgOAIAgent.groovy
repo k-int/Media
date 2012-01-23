@@ -90,7 +90,7 @@ class ncmgOAIAgent {
         // log.debug( "content type: ${resp.headers.'Content-Type'}" )
 
         xml?.ListRecords?.record.each { rec ->
-          log.debug("Record under xml");
+          log.debug("Record under xml ${rec.toString()}");
         }
       }
 
