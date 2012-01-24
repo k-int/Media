@@ -27,7 +27,10 @@ import java.nio.charset.Charset
 import groovyx.net.http.RESTClient
 import groovy.util.slurpersupport.GPathResult
 import groovy.xml.StreamingMarkupBuilder
-import static groovyx.net.http.ContentType.URLENC
+import org.apache.http.entity.mime.*
+import org.apache.http.entity.mime.content.*
+import java.nio.charset.Charset
+
 
 class ncmgOAIAgent {
 
@@ -52,6 +55,16 @@ class ncmgOAIAgent {
     def mongo = new com.gmongo.GMongo();
     def db = mongo.getDB("gatherer")
 
+    def repository_client_service = ctx.getBean('repositoryClientService')
+
+    def feed_baseurl = 'http://localhost:8080/repository/upload.json'
+    def feed_identity = 'admin'
+    def feed_credentials = 'password'
+    log.debug("Assemble repository client to ${feed_baseurl} - ${feed_identity}/${feed_credentials}");
+    def aggregator_service = new HTTPBuilder( feed_baseurl )
+    aggregator_service.auth.basic feed_identity, feed_credentials
+
+
     def ncmg_gatherer_agent_info = db.agents.findOne(identifier: 'mcmg_gatherer_agent_info')
 
     if ( ncmg_gatherer_agent_info == null ) {
@@ -62,7 +75,7 @@ class ncmgOAIAgent {
     def oai_endpoint = new RESTClient( 'http://www.culturegrid.org.uk/dpp/oai' )
     // oai_endpoint.auth.basic model.dppUser, model.dppPass
 
-    fetchOAIPage(oai_endpoint)
+    fetchOAIPage(repository_client_service, oai_endpoint, aggregator_service)
 
     // Form an oai request
     def more_oai_data = false
@@ -72,7 +85,7 @@ class ncmgOAIAgent {
     db.agents.save(ncmg_gatherer_agent_info);
   }
 
-  def fetchOAIPage(oai_endpoint) {
+  def fetchOAIPage(repository_client_service, oai_endpoint, aggregator_service) {
     // oai_endpoint.request(GET,XML) {request ->
     oai_endpoint.request(GET) {request ->
 
@@ -95,6 +108,9 @@ class ncmgOAIAgent {
           def builder = new StreamingMarkupBuilder()
           // log.debug("record: ${builder.bindNode(rec.metadata.description).toString()}")
           log.debug("record: ${builder.bindNode(rec.metadata.children()[0]).toString()}")
+
+          byte[] db = rec.metadata.children()[0].toString().getBytes('UTF-8')
+          repository_client_service.uploadStream(db,aggregator_service, 'nmcg')
         }
       }
 
@@ -172,6 +188,7 @@ class ncmgOAIAgent {
     def result_xml = writer.toString()
     log.debug(result_xml)
   }
+
 }
 
 

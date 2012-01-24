@@ -32,6 +32,8 @@ grails.project.dependency.resolution = {
         runtime 'com.gmongo:gmongo:0.9.2'
         runtime 'org.apache.solr:solr-solrj:1.4.1'
         runtime 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+        runtime 'commons-fileupload:commons-fileupload:1.2.2'
+        runtime 'org.apache.httpcomponents:httpmime:4.1.2'
         // runtime 'org.apache.solr:solr-solrj:3.5.0'
     }
 }

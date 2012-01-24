@@ -2,7 +2,7 @@ package cgimp
 
 import org.springframework.context.*
 
-class GatherJob {
+class GatherJob implements ApplicationContextAware {
 
     // def timeout = 5000l // execute job once in 5 seconds
     def concurrent = false
