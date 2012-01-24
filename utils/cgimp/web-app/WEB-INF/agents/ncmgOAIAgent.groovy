@@ -26,6 +26,7 @@ import org.apache.http.entity.mime.content.*
 import java.nio.charset.Charset
 import groovyx.net.http.RESTClient
 import groovy.util.slurpersupport.GPathResult
+import groovy.xml.StreamingMarkupBuilder
 import static groovyx.net.http.ContentType.URLENC
 
 class ncmgOAIAgent {
@@ -90,7 +91,10 @@ class ncmgOAIAgent {
         // log.debug( "content type: ${resp.headers.'Content-Type'}" )
 
         xml?.ListRecords?.record.each { rec ->
-          log.debug("Record under xml ${rec.toString()}");
+          // log.debug("Record under xml ${rec.toString()}");
+          def builder = new StreamingMarkupBuilder()
+          // log.debug("record: ${builder.bindNode(rec.metadata.description).toString()}")
+          log.debug("record: ${builder.bindNode(rec.metadata.children()[0]).toString()}")
         }
       }
 
