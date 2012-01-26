@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<tag0:description xmlns:tag0="http://purl.org/mla/pnds/pndsdc/">
+  <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">http://media.culturegrid.org.uk/mediaLibrary/NCMG/BLDIDHH002656.jpg</dc:identifier>
+  <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">bowl</dc:title>
+  <dc:description xmlns:dc="http://purl.org/dc/elements/1.1/">A plain, open shape with on handles on high foot. Decoration: No evidence of decoration.</dc:description>
+  <dc:description xmlns:dc="http://purl.org/dc/elements/1.1/">Accession number: NCM 1885-146</dc:description>
+  <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">ceramics</dc:subject>
+  <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">objects of indeterminate use (containers)</dc:subject>
+  <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">food and drink?</dc:subject>
+  <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">CYPRIOT</dc:subject>
+  <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">PHOENICIAN?</dc:subject>
+  <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">PhysicalObject</dc:type>
+  <dcterms:license xmlns:dcterms="http://purl.org/dc/terms/">Image Copyright Nottingham City Museums &amp; Galleries</dcterms:license>
+  <dcterms:rightsHolder xmlns:dcterms="http://purl.org/dc/terms/"/>
+  <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+  <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+  <dc:language xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+  <dcterms:spatial xmlns:dcterms="http://purl.org/dc/terms/"/>
+  <dcterms:temporal xmlns:dcterms="http://purl.org/dc/terms/">900BC</dcterms:temporal>
+  <pndsterms:thumbnail xmlns:pndsterms="http://purl.org/mla/pnds/terms/" valueURI="http://media.culturegrid.org.uk/mediaLibrary/NCMG/BLDIDHH002656.jpg"/>
+  <pndsterms:extension xmlns:pndsterms="http://purl.org/mla/pnds/terms/">
+    <e20cl:materials xmlns:e20cl="http://www.20thcenturylondon.org.uk/">earthenware</e20cl:materials>
+  </pndsterms:extension>
+  <dcterms:isPartOf xmlns:dcterms="http://purl.org/dc/terms/">http://gossweb.nottinghamcity.gov.uk/www/collections12/worldcultures/default.asp</dcterms:isPartOf>
+</tag0:description>
