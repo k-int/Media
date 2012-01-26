@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-cd /home/media/apache-tomcat-7.0.23/bin
+cd /home/media/apache-tomcat-7.0.25/bin
 # ./shutdown sh
 cd /home/media
 rm -Rf src

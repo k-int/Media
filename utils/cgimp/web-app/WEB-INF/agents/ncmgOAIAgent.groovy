@@ -107,9 +107,10 @@ class ncmgOAIAgent {
           // log.debug("Record under xml ${rec.toString()}");
           def builder = new StreamingMarkupBuilder()
           // log.debug("record: ${builder.bindNode(rec.metadata.description).toString()}")
-          log.debug("record: ${builder.bindNode(rec.metadata.children()[0]).toString()}")
+          def new_record = builder.bindNode(rec.metadata.children()[0]).toString()
+          log.debug("record: ${new_record}")
 
-          byte[] db = rec.metadata.children()[0].toString().getBytes('UTF-8')
+          byte[] db = new_record.getBytes('UTF-8')
           repository_client_service.uploadStream(db,aggregator_service, 'nmcg')
         }
       }
