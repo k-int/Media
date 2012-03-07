@@ -1,17 +1,14 @@
 @Grab(group='net.sf.json-lib', module='json-lib', version='2.4', classifier='jdk15')
 @Grab(group='commons-lang', module='commons-lang', version='2.4')
+@Grab(group='xom', module='xom', version='1.1')
 
-import org.apache.commons.lang.SystemUtils
-import org.json.JSONObject
+import net.sf.json.*
+import net.sf.json.xml.*
 
+def xmlfile = new File('test1.xml')
 
-def printInfo() {
-  if (SystemUtils.isJavaVersionAtLeast(5)) {
-    println 'We are ready to use annotations in our Groovy code.'
-  } else {
-    println 'We cannot use annotations in our Groovy code.'
-  }
-}
-
-printInfo()
-
+// see http://json-lib.sourceforge.net/apidocs/
+def xml = xmlfile.text
+XMLSerializer xmlSerializer = new XMLSerializer();  
+JSON json = xmlSerializer.read( xml);  
+System.out.println( json.toString(2) );  
