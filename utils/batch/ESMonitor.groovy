@@ -14,6 +14,7 @@ println("Startup.. Initialising at ${starttime}");
 
 def monitor = new RepoMonitor();
 def tse = new TripleStoreService();
+def reccount = 0;
 
 println("initialise triple store");
 tse.init();
@@ -26,7 +27,8 @@ println("Monitor starting after ${System.currentTimeMillis() - starttime}");
 
 monitor.iterateLatest(db,'work', -1) { jsonobj ->
   
-  println("Process ${jsonobj}");
+  println("Process [${reccount++}] ${jsonobj._id}");
+ 
 
   // def writer = new StringWriter()
   // def xml = new groovy.xml.MarkupBuilder(writer)
@@ -46,4 +48,4 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
   // println("Updated provider ( ${System.currentTimeMillis() - starttime} )");
 }
 
-println("Completed after ${System.currentTimeMillis() - starttime}");
+println("Completed after ${reccount} records in ${System.currentTimeMillis() - starttime}ms");
