@@ -71,28 +71,53 @@ class ncmgOAIAgent {
       ncmg_gatherer_agent_info = [:]
     }
 
+    def props =[:]
+    props.reccount = 0;
+
     // def oai_endpoint = new HTTPBuilder( 'http://culturegrid.org.uk/dpp/oai' )
     def oai_endpoint = new RESTClient( 'http://www.culturegrid.org.uk/dpp/oai' )
     // oai_endpoint.auth.basic model.dppUser, model.dppPass
 
-    fetchOAIPage(repository_client_service, oai_endpoint, aggregator_service)
+    def rt = fetchOAIPage(repository_client_service, oai_endpoint, aggregator_service, null, props)
 
-    // Form an oai request
-    def more_oai_data = false
-    while ( more_oai_data ) {
+    while ( ( rt != null ) && ( rt.length() > 0 ) ) {
+      try {
+        Thread.sleep(5000);
+      }
+      catch ( Exception e ) {
+      }
+
+      log.debug("Iterating using resumption token");
+      rt = fetchOAIPage(repository_client_service, oai_endpoint, aggregator_service, rt, props);
     }
 
     db.agents.save(ncmg_gatherer_agent_info);
   }
 
-  def fetchOAIPage(repository_client_service, oai_endpoint, aggregator_service) {
+  def fetchOAIPage(repository_client_service, 
+                   oai_endpoint, 
+                   aggregator_service,
+                   resumption_token, 
+                   props) {
+
+    def result = null;
+
     // oai_endpoint.request(GET,XML) {request ->
     oai_endpoint.request(GET) {request ->
 
       // uri.path = '/ajax/services/search/web'
-      uri.query = [ 'verb':'ListRecords', 
-                    'metadataPrefix':'pnds_dcap_raw', 
-                    'set' : "PN:NCMG:*" ]  // from, until,...
+      if ( resumption_token != null ) {
+        log.debug("Processing with resumption token...");
+        uri.query = [ 'verb':'ListRecords', 
+                      'resumptionToken':resumption_token, 
+                      ]  // from, until,...
+      }
+      else {
+        log.debug("Initial harvest - no resumption token");
+        uri.query = [ 'verb':'ListRecords', 
+                      'metadataPrefix':'pnds_dcap_raw', 
+                      'set' : "PN:NCMG:*" ]  // from, until,...
+      }
 
       request.getParams().setParameter("http.socket.timeout", new Integer(5000))
       headers.Accept = 'application/xml'
@@ -108,17 +133,24 @@ class ncmgOAIAgent {
           def builder = new StreamingMarkupBuilder()
           // log.debug("record: ${builder.bindNode(rec.metadata.description).toString()}")
           def new_record = builder.bindNode(rec.metadata.children()[0]).toString()
-          log.debug("record: ${new_record}")
+          log.debug("submit record[${props.reccount++}]")
 
           byte[] db = new_record.getBytes('UTF-8')
           repository_client_service.uploadStream(db,aggregator_service, 'nmcg')
+
         }
+
+        result = xml?.ListRecords?.resumptionToken?.toString()
       }
 
       response.failure = { resp ->
         log.debug( resp.statusLine )
       }
     }
+
+    log.debug("fetch page returning ${result}.");
+
+    result
   }
 
   // http://localhost:28017/gatherer/records/?limit=1 to see an example record in the mongo http interface

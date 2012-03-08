@@ -27,6 +27,7 @@ class AgentManagerService {
         log.debug("Looking up agent ${h.getAgentName()}");
         Agent agent = Agent.findByAgentName(h.getAgentName())
         if ( agent == null ) {
+          log.debug("Register new agent");
           agent = new Agent(agentName:h.getAgentName(),
                             agentCode:agent_file.text,
                             lastRun:null,
@@ -39,6 +40,10 @@ class AgentManagerService {
             log.error("Problem saving agent ${agent.errors}");
           }
         }
+        else {
+          log.debug("Agent already present");
+        }
+
         log.debug("Loaded ${agent_file}");
       }
     }
