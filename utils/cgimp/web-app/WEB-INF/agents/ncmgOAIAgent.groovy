@@ -138,6 +138,11 @@ class ncmgOAIAgent {
           byte[] db = new_record.getBytes('UTF-8')
           repository_client_service.uploadStream(db,aggregator_service, 'nmcg')
 
+          try {
+            Thread.sleep(500);
+          }
+          catch ( Exception e ) {
+          }
         }
 
         result = xml?.ListRecords?.resumptionToken?.toString()
