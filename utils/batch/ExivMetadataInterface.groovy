@@ -11,6 +11,8 @@ class ExivMetadataInterface {
     process.in.eachLine { line -> 
       println line 
     }
+
+     // May try process.withWriter { writer -> <cr> writer << 'test text' }
   }
 
   /**
