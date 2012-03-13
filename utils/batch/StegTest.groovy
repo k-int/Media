@@ -7,13 +7,45 @@ import java.awt.image.WritableRaster;
 import java.awt.image.DataBufferByte;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 
 /**
  *  BAsed on William Wilsons code from http://www.dreamincode.net/forums/topic/27950-steganography/
  */
 
+
+
+
+/**
+ * @param orig_file Original File
+ * @param identifier Identifier to encode
+ * @return File for resultant document.
+ */
+def encode(File orig_file, String identifier) {
+  def target_file = new File("test2");
+  println("Encoding \"${identifier}\" of length ${identifier.length()} in file ${target_file}");
+  BufferedImage image_orig  = ImageIO.read(orig_file)
+  BufferedImage image = user_space(image_orig);
+  image = add_text(image, identifier);
+  setImage(image, target_file, "png");
+  println("Returning ${target_file}");
+  target_file
+}
+                      
+def decode(File f) {
+  println("Attempting to decode ${f}");
+  byte[] decode;
+  try {
+    //user space is necessary for decrypting
+    BufferedImage image = user_space(ImageIO.read(f));
+    decode = decode_text(get_byte_data(image));
+    return(new String(decode));
+  }
+  catch(Exception e) {
+    e.printStackTrace();
+    return "";
+  }
+}
 
 /*
  *Encrypt an image with text, the output file will be of type .png
@@ -50,11 +82,7 @@ public String decode(String path, String name) {
     decode = decode_text(get_byte_data(image));
     return(new String(decode));
   }
-  catch(Exception e)
-  {
-    JOptionPane.showMessageDialog(null, 
-      "There is no hidden message in this image!","Error",
-      JOptionPane.ERROR_MESSAGE);
+  catch(Exception e) {
     return "";
   }
 }
@@ -86,10 +114,7 @@ private BufferedImage getImage(String f)
   {
     image = ImageIO.read(file);
   }
-  catch(Exception ex)
-  {
-    JOptionPane.showMessageDialog(null, 
-      "Image could not be read!","Error",JOptionPane.ERROR_MESSAGE);
+  catch(Exception ex) {
   }
   return image;
 }
@@ -109,10 +134,7 @@ private boolean setImage(BufferedImage image, File file, String ext)
     ImageIO.write(image,ext,file);
     return true;
   }
-  catch(Exception e)
-  {
-    JOptionPane.showMessageDialog(null, 
-      "File could not be saved!","Error",JOptionPane.ERROR_MESSAGE);
+  catch(Exception e) {
     return false;
   }
 }
@@ -126,18 +148,18 @@ private boolean setImage(BufferedImage image, File file, String ext)
 private BufferedImage add_text(BufferedImage image, String text)
 {
   //convert all items to byte arrays: image, message, message length
-  byte img[]  = get_byte_data(image);
-  byte msg[] = text.getBytes();
-  byte len[]   = bit_conversion(msg.length);
+  byte[] img = get_byte_data(image);
+  byte[] msg = text.getBytes();
+  byte[] len = bit_conversion(msg.length);
   try
   {
-    encode_text(img, len,  0); //0 first positiong
-    encode_text(img, msg, 32); //4 bytes of space for length: 4bytes*8bit = 32 bits
+    println("Encoding length: ${msg.length} ${len}");
+    encode_text(img, len,  0, true); //0 first positiong
+    encode_text(img, msg, 32, false); //4 bytes of space for length: 4bytes*8bit = 32 bits
+    def r = decode_text(img);
+    println("encoded string: ${new String(r)}");
   }
-  catch(Exception e)
-  {
-    JOptionPane.showMessageDialog(null, 
-"Target File cannot hold message!", "Error",JOptionPane.ERROR_MESSAGE);
+  catch(Exception e) {
   }
   return image;
 }
@@ -165,8 +187,7 @@ private BufferedImage user_space(BufferedImage image)
  *@see WritableRaster
  *@see DataBufferByte
  */
-private byte[] get_byte_data(BufferedImage image)
-{
+private byte[] get_byte_data(BufferedImage image) {
   WritableRaster raster   = image.getRaster();
   DataBufferByte buffer = (DataBufferByte)raster.getDataBuffer();
   return buffer.getData();
@@ -191,7 +212,9 @@ private byte[] bit_conversion(int i)
   byte byte1 = (byte)((i & 0x0000FF00) >>> 8 ); //0
   byte byte0 = (byte)((i & 0x000000FF)     );
   //{0,0,0,byte0} is equivalent, since all shifts >=8 will be 0
-  return(new byte[]{byte3,byte2,byte1,byte0});
+  byte[] result = [byte3,byte2,byte1,byte0];
+
+  result
 }
 
 /*
@@ -201,8 +224,11 @@ private byte[] bit_conversion(int i)
  *@param offset    The offset into the image array to add the addition data
  *@return Returns data Array of merged image and addition data
  */
-private byte[] encode_text(byte[] image, byte[] addition, int offset)
+private byte[] encode_text(byte[] image, byte[] addition, int offset, boolean debug)
 {
+
+  println ("Adding ${addition}");
+
   //check that the data + offset will fit in the image
   if(addition.length + offset > image.length)
   {
@@ -213,7 +239,7 @@ private byte[] encode_text(byte[] image, byte[] addition, int offset)
   {
     //loop through the 8 bits of each byte
     int add = addition[i];
-    for(int bit=7; bit>=0; --bit, ++offset) //ensure the new offset value carries on through both loops
+    for(int bit=7; bit>=0; --bit) //ensure the new offset value carries on through both loops
     {
       //assign an integer to b, shifted by bit spaces AND 1
       //a single bit of the current byte
@@ -221,6 +247,10 @@ private byte[] encode_text(byte[] image, byte[] addition, int offset)
       //assign the bit by taking: [(previous byte value) AND 0xfe] OR bit to add
       //changes the last bit of the byte in the image to be the bit of addition
       image[offset] = (byte)((image[offset] & 0xFE) | b );
+      if ( debug)
+        println("Writing byte[${offset}] as (${b}) ${image[offset]}");
+
+      ++offset;
     }
   }
   return image;
@@ -236,22 +266,24 @@ private byte[] decode_text(byte[] image)
   int length = 0;
   int offset  = 32;
   //loop through 32 bytes of data to determine text length
-  for(int i=0; i<32; ++i) //i=24 will also work, as only the 4th byte contains real data
-  {
+  for(int i=0; i<32; ++i) {
+    println("Byte[${i}] = ${image[i]}, Bit=${image[i] & 1}");
     length = (length << 1) | (image[i] & 1);
   }
   
   byte[] result = new byte[length];
+  println("New byte array of length ${length} (${result})");
   
   //loop through each byte of text
   for(int b=0; b<result.length; ++b )
   {
     //loop through each bit within a byte of text
-    for(int i=0; i<8; ++i, ++offset)
-    {
+    for(int i=0; i<8; ++i) {
       //assign bit: [(new byte value) << 1] OR [(text byte) AND 1]
       result[b] = (byte)((result[b] << 1) | (image[offset] & 1));
+      ++offset;
     }
   }
+  println("Result is ${result}");
   return result;
 }

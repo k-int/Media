@@ -46,18 +46,21 @@ File f = new File('images/file');
 
 def canonical_identifier = java.util.UUID.randomUUID().toString()
 
+def st = new StegTest()
+
 // Hide the canonical identifier in the image
-stegHide(f,canonical_identifier);
+def new_file = st.encode(f,canonical_identifier);
+
+println("hidden identifier ${canonical_identifier} in ${new_file}");
 
 // Add the image metadata to the newly generated file
-addImageHistoryTag(f, canonical_identifier);
+addImageHistoryTag(new_file, canonical_identifier);
+
+println("Test decode - looking for steghide contents in ${new_file}");
+println("Result of encoding: ${st.decode(new_file)}");
 
 println("Completed after ${System.currentTimeMillis() - starttime}ms");
 
-
-stegHide(image_file, identifier) {
-  println("steghide");
-}
 
 def loadRemoteImage(uri) {
 
@@ -81,6 +84,9 @@ def loadRemoteImage(uri) {
  * @param file
 */
 def addImageHistoryTag(File file, identifier) {
+
+  println("Adding image history info to ${file}");
+
   File dst = null;
   IImageMetadata metadata = null;
   JpegImageMetadata jpegMetadata = null;
