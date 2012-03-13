@@ -43,10 +43,21 @@ println("Startup.. Initialising at ${starttime}");
 println("Add image history");
 
 File f = new File('images/file');
-addImageHistoryTag(f);
+
+def canonical_identifier = java.util.UUID.randomUUID().toString()
+
+// Hide the canonical identifier in the image
+stegHide(f,canonical_identifier);
+
+// Add the image metadata to the newly generated file
+addImageHistoryTag(f, canonical_identifier);
 
 println("Completed after ${System.currentTimeMillis() - starttime}ms");
 
+
+stegHide(image_file, identifier) {
+  println("steghide");
+}
 
 def loadRemoteImage(uri) {
 
@@ -69,7 +80,7 @@ def loadRemoteImage(uri) {
  * a field to update that looked like it wasn't commonly mucked with.)
  * @param file
 */
-def addImageHistoryTag(File file) {
+def addImageHistoryTag(File file, identifier) {
   File dst = null;
   IImageMetadata metadata = null;
   JpegImageMetadata jpegMetadata = null;
@@ -116,7 +127,7 @@ def addImageHistoryTag(File file) {
           TiffOutputDirectory exifDirectory = outputSet.getOrCreateExifDirectory();
           addToDirectory(outputSet, TiffConstants.EXIF_TAG_XPCOMMENT,"MEDIA This is the image history tag value......", exifDirectory);
           addToDirectory(outputSet, TiffConstants.EXIF_TAG_COPYRIGHT,"MEDIA copyright statement", exifDirectory);
-          addToDirectory(outputSet, TiffConstants.EXIF_TAG_IMAGE_ID ,"MEDIA image id", exifDirectory);
+          addToDirectory(outputSet, TiffConstants.EXIF_TAG_IMAGE_ID ,"MEDIA image id ${identifier}", exifDirectory);
           addToDirectory(outputSet, TiffConstants.EXIF_TAG_OWNER_NAME,"MEDIA Owner Name", exifDirectory);
           addToDirectory(outputSet, TiffConstants.EXIF_TAG_SERIAL_NUMBER,"MEDIA Serial Number", exifDirectory);
           // addToDirectory(outputSet, TiffConstants.EXIF_TAG_USER_COMMENT,"MEDIA User Comment", exifDirectory);
