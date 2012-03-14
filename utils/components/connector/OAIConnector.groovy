@@ -1,19 +1,8 @@
 import com.gmongo.GMongo
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.params.ModifiableSolrParams;
-import org.apache.solr.common.*;
-import grails.converters.*
-// import groovy.text.Template
-// import groovy.text.SimpleTemplateEngine
 import groovy.xml.MarkupBuilder
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.apache.commons.logging.LogFactory
 import java.util.zip.*;
 import groovy.xml.MarkupBuilder
-import org.springframework.beans.factory.InitializingBean
 import groovy.util.slurpersupport.GPathResult
 import static groovyx.net.http.ContentType.URLENC
 import static groovyx.net.http.ContentType.*
@@ -34,10 +23,8 @@ class OAIConnector {
 
   private static final log = LogFactory.getLog(this)
 
-  }
-
   def sync(oai_connector_info) {
-    println("OAIConnector::sync(${props})");
+    println("OAIConnector::sync(${oai_connector_info})");
 
     // Get a handle to the local mongo service
     // def mongo = new com.gmongo.GMongo();
@@ -91,7 +78,6 @@ class OAIConnector {
 
     def result = null;
 
-    // oai_endpoint.request(GET,XML) {request ->
     oai_endpoint.request(GET) {request ->
 
       // uri.path = '/ajax/services/search/web'
