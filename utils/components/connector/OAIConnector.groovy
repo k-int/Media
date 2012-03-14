@@ -1,5 +1,3 @@
-package com.k_int.media;
-
 import com.gmongo.GMongo
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -32,21 +30,12 @@ import org.apache.http.entity.mime.content.*
 import java.nio.charset.Charset
 
 
-class ncmgOAIAgent {
+class OAIConnector {
 
   private static final log = LogFactory.getLog(this)
-  
-  // handlers have access to the repository mongo service.. suggest you use http://blog.paulopoiati.com/2010/06/20/gmongo-0-5-released/
-  def getAgentName() {
-    "Nottinhgam City Museums and Galleries OAI Agent"
-  }
 
-  def getRevision() {
-    1
-  }
-
-  def isActive() {
-    return true
+  def sync(props) {
+    println("OAIConnector::sync(${props})");
   }
 
   def process(properties, ctx, otherlog) {
@@ -55,12 +44,11 @@ class ncmgOAIAgent {
     def mongo = new com.gmongo.GMongo();
     def db = mongo.getDB("gatherer")
 
-    def repository_client_service = ctx.getBean('repositoryClientService')
-
     def feed_baseurl = 'http://localhost:8080/repository/upload.json'
     def feed_identity = 'admin'
     def feed_credentials = 'password'
     log.debug("Assemble repository client to ${feed_baseurl} - ${feed_identity}/${feed_credentials}");
+
     def aggregator_service = new HTTPBuilder( feed_baseurl )
     aggregator_service.auth.basic feed_identity, feed_credentials
 
@@ -78,7 +66,7 @@ class ncmgOAIAgent {
     def oai_endpoint = new RESTClient( 'http://www.culturegrid.org.uk/dpp/oai' )
     // oai_endpoint.auth.basic model.dppUser, model.dppPass
 
-    def rt = fetchOAIPage(repository_client_service, oai_endpoint, aggregator_service, null, props)
+    def rt = fetchOAIPage(oai_endpoint, aggregator_service, null, props)
 
     while ( ( rt != null ) && ( rt.length() > 0 ) ) {
       try {
@@ -88,14 +76,13 @@ class ncmgOAIAgent {
       }
 
       log.debug("Iterating using resumption token");
-      rt = fetchOAIPage(repository_client_service, oai_endpoint, aggregator_service, rt, props);
+      rt = fetchOAIPage(oai_endpoint, aggregator_service, rt, props);
     }
 
     db.agents.save(ncmg_gatherer_agent_info);
   }
 
-  def fetchOAIPage(repository_client_service, 
-                   oai_endpoint, 
+  def fetchOAIPage(oai_endpoint, 
                    aggregator_service,
                    resumption_token, 
                    props) {
@@ -136,7 +123,7 @@ class ncmgOAIAgent {
           log.debug("submit record[${props.reccount++}]")
 
           byte[] db = new_record.getBytes('UTF-8')
-          repository_client_service.uploadStream(db,aggregator_service, 'nmcg')
+          uploadStream(db,aggregator_service, 'nmcg')
 
           try {
             Thread.sleep(500);
@@ -158,67 +145,44 @@ class ncmgOAIAgent {
     result
   }
 
-  // http://localhost:28017/gatherer/records/?limit=1 to see an example record in the mongo http interface
-  def processEntry(rec, db, log) {
-    // rec['aggregator.internal.id'], rec['dc.related.link'], 
-    def local_info = db.records.findOne(identifier: rec['aggregator.internal.id'])
-    if ( local_info == null ) {
-      local_info = [:]
-      local_info.identifier=rec['aggregator.internal.id']
-      local_info.descriptive_record=rec
-      db.records.save(local_info);
-    }
-    else {
-      log.debug("found ${rec['aggregator.internal.id']}, image is at ${rec['dc.related.link']}");
-    }
-    log.debug("Call construct zip");
-    buildXml(rec)
-    // log.debug("Call build zip");
-    // zip(rec)
-    log.debug("done");
-  }
+  def uploadStream(document_bytes,target_service, data_provider) {
 
-  def zip(rec) {
-    log.debug("Build zip");
-    File f = new File("/tmp/t.zip")
-    if ( f.exists() ) {
-      log.debug("Delete existing")
-      f.delete() 
-    }
-    FileOutputStream fos = new FileOutputStream(f)
-    def zipStream = new ZipOutputStream(fos) 
+    log.debug("About to make post request");
 
-    def file = new File("/tmp/t") 
-    def entry = new ZipEntry(file.name) 
-    zipStream.putNextEntry(entry) 
-    zipStream << new FileInputStream(file)
-    zipStream.closeEntry()
-    zipStream.close();
-    log.debug("constructZip Completed");
-  }
+    try {
+      byte[] resource_to_deposit = document_bytes
 
-  def buildXml(rec) {
-    log.debug("Build xml");
-    def writer = new StringWriter()
-    def xml = new MarkupBuilder(writer)
-    xml.'description'('xmlns': 'http://purl.org/mla/pnds/pndsdc/',
-                     'xmlns:dc' : 'http://purl.org/dc/elements/1.1/',
-                     'xmlns:dcterms':'http://purl.org/dc/terms/',
-                     'xmlns:e20cl':'http://www.20thcenturylondon.org.uk/',
-                     'xmlns:pnds_dc': 'http://purl.org/mla/pnds/pndsdc/',
-                     'xmlns:pndsterms':'http://purl.org/mla/pnds/terms/',
-                     'xmlns:xsi':'http://www.w3.org/2001/XMLSchema-instance',
-                     'xsi:schemaLocation': 'http://www.peoplesnetwork.gov.uk/schema/CultureGrid_Item http://www.peoplesnetwork.gov.uk/schema/CultureGrid_Item.xsd'  ) {
-      'dc:identifier'('1977-5750')
-      'dc:title'('title')
-      'dc:description'('descr')
-      'dc:publisher'('descr')
-      'dc:type'('descr')
-      'dcterms:rightsholder'('descr')
-      'dc:subject'('subject')
+      log.debug("Length of input stream is ${resource_to_deposit.length}");
+
+      target_service.request(POST) {request ->
+        requestContentType = 'multipart/form-data'
+
+        // Much help taken from http://evgenyg.wordpress.com/2010/05/01/uploading-files-multipart-post-apache/
+        def multipart_entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+        multipart_entity.addPart( "owner", new StringBody( data_provider, "text/plain", Charset.forName( "UTF-8" )))  // Owner
+
+        def uploaded_file_body_part = new org.apache.http.entity.mime.content.ByteArrayBody(resource_to_deposit, 'text/xml', 'filename')
+        multipart_entity.addPart( "upload", uploaded_file_body_part)
+
+        request.entity = multipart_entity;
+
+        response.success = { resp, data ->
+          log.debug("response status: ${resp.statusLine}")
+          log.debug("Response data code: ${data?.code}");
+        }
+
+        response.failure = { resp ->
+          log.error("Failure - ${resp}");
+        }
+      }
     }
-    def result_xml = writer.toString()
-    log.debug(result_xml)
+    catch ( Exception e ) {
+      log.error("Unexpected exception trying to read remote stream",e)
+    }
+    finally {
+      log.debug("uploadStream try block completed");
+    }
+    log.debug("uploadStream completed");
   }
 
 }
