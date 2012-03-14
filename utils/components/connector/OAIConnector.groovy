@@ -34,29 +34,29 @@ class OAIConnector {
 
   private static final log = LogFactory.getLog(this)
 
-  def sync(props) {
-    println("OAIConnector::sync(${props})");
   }
 
-  def process(properties, ctx, otherlog) {
-    
+  def sync(oai_connector_info) {
+    println("OAIConnector::sync(${props})");
+
     // Get a handle to the local mongo service
-    def mongo = new com.gmongo.GMongo();
-    def db = mongo.getDB("gatherer")
+    // def mongo = new com.gmongo.GMongo();
+    // def db = mongo.getDB("media_rcs")
 
-    def feed_baseurl = 'http://localhost:8080/repository/upload.json'
-    def feed_identity = 'admin'
-    def feed_credentials = 'password'
-    log.debug("Assemble repository client to ${feed_baseurl} - ${feed_identity}/${feed_credentials}");
+    def repo_baseurl = 'http://localhost:8080/repository/upload.json'
+    def repo_identity = 'admin'
+    def repo_credentials = 'password'
+    log.debug("Assemble repository client to ${repo_baseurl} - ${repo_identity}/${repo_credentials}");
 
-    def aggregator_service = new HTTPBuilder( feed_baseurl )
-    aggregator_service.auth.basic feed_identity, feed_credentials
+    def aggregator_service = new HTTPBuilder( repo_baseurl )
+    aggregator_service.auth.basic repo_identity, repo_credentials
 
 
-    def ncmg_gatherer_agent_info = db.agents.findOne(identifier: 'mcmg_gatherer_agent_info')
+    // def oai_connector_info = db.agents.findOne(identifier: 'mcmg_gatherer_agent_info')
 
-    if ( ncmg_gatherer_agent_info == null ) {
-      ncmg_gatherer_agent_info = [:]
+    if ( oai_connector_info == null ) {
+      println("No connector info... abort");
+      return;
     }
 
     def props =[:]
@@ -66,7 +66,7 @@ class OAIConnector {
     def oai_endpoint = new RESTClient( 'http://www.culturegrid.org.uk/dpp/oai' )
     // oai_endpoint.auth.basic model.dppUser, model.dppPass
 
-    def rt = fetchOAIPage(oai_endpoint, aggregator_service, null, props)
+    def rt = fetchOAIPage(oai_endpoint, aggregator_service, null, props, oai_connector_info.prefix, oai_connector_info.setname)
 
     while ( ( rt != null ) && ( rt.length() > 0 ) ) {
       try {
@@ -76,16 +76,18 @@ class OAIConnector {
       }
 
       log.debug("Iterating using resumption token");
-      rt = fetchOAIPage(oai_endpoint, aggregator_service, rt, props);
+      rt = fetchOAIPage(oai_endpoint, aggregator_service, rt, props, oai_connector_info.prefix, oai_connector_info.setname);
     }
 
-    db.agents.save(ncmg_gatherer_agent_info);
+    db.agents.save(oai_connector_info);
   }
 
   def fetchOAIPage(oai_endpoint, 
                    aggregator_service,
                    resumption_token, 
-                   props) {
+                   props,
+                   prefix,
+                   setname) {
 
     def result = null;
 
@@ -102,8 +104,8 @@ class OAIConnector {
       else {
         log.debug("Initial harvest - no resumption token");
         uri.query = [ 'verb':'ListRecords', 
-                      'metadataPrefix':'pnds_dcap_raw', 
-                      'set' : "PN:NCMG:*" ]  // from, until,...
+                      'metadataPrefix':prefix,
+                      'set': setname ]  // from, until,...
       }
 
       request.getParams().setParameter("http.socket.timeout", new Integer(5000))
