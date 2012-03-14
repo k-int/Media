@@ -57,6 +57,9 @@ class ConnectorSubsystem {
       def connector_class = gcl.loadClass(existing_entry.connector);
       def connector = connector_class.newInstance();
       connector.sync(existing_entry);
+      // Update any returned params
+      println("Updating entry: ${existing_entry}");
+      db.connectors.update(params);
     }
     else {
       throw new Exception("Unknown Connector Shortcode ${shortcode}");

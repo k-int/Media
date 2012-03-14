@@ -48,6 +48,7 @@ class OAIConnector {
 
     def props =[:]
     props.reccount = 0;
+    props.maxts = "";
 
     // def oai_endpoint = new HTTPBuilder( 'http://culturegrid.org.uk/dpp/oai' )
     def oai_endpoint = new RESTClient( 'http://www.culturegrid.org.uk/dpp/oai' )
@@ -55,7 +56,11 @@ class OAIConnector {
 
     def rt = fetchOAIPage(oai_endpoint, aggregator_service, null, props, oai_connector_info.prefix, oai_connector_info.setname)
 
-    while ( ( rt != null ) && ( rt.length() > 0 ) ) {
+    def cont = true
+
+    while ( ( rt != null ) && 
+            ( rt.length() > 0 ) && 
+            ( cont ) ) {
       try {
         Thread.sleep(5000);
       }
@@ -64,6 +69,14 @@ class OAIConnector {
 
       log.debug("Iterating using resumption token");
       rt = fetchOAIPage(oai_endpoint, aggregator_service, rt, props, oai_connector_info.prefix, oai_connector_info.setname);
+
+      if ( ( oai_connector_info.maxbatch != null ) && 
+           ( oai_connector_info.maxbatch > 0 ) ) {
+        println("Checking counter (${props.reccount} < ${oai_connector_info.maxbatch}");
+        if ( props.reccount > oai_connector_info.maxbatch ) {
+          cont = false;
+        }
+      }
     }
 
     db.agents.save(oai_connector_info);
@@ -75,6 +88,7 @@ class OAIConnector {
                    props,
                    prefix,
                    setname) {
+    println("fetchOAIPage ${resumption_token}, ${prefix}, ${setname}");
 
     def result = null;
 
@@ -110,7 +124,10 @@ class OAIConnector {
           def new_record = builder.bindNode(rec.metadata.children()[0]).toString()
           log.debug("submit record[${props.reccount++}]")
 
+          props.maxts = rec.header.datestamp;
           byte[] db = new_record.getBytes('UTF-8')
+
+          println("About to make post request [${props.reccount} / ${props.maxts}]");
           uploadStream(db,aggregator_service, 'nmcg')
 
           try {

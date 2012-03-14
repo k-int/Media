@@ -17,7 +17,17 @@ def cs = new ConnectorSubsystem();
 cs.removeAll();
 
 // cs.registerOAIConnector(shortcode:'ncmg',baseuri:'http://www.culturegrid.org.uk/dpp/oai', prefix:'pnds_dcap_raw',setname:'PN:NCMG:*');
-cs.registerOAIConnector('ncmg','http://www.culturegrid.org.uk/dpp/oai','pnds_dcap_raw','PN:NCMG:*');
+// cs.registerOAIConnector('ncmg','http://www.culturegrid.org.uk/dpp/oai','pnds_dcap_raw','PN:NCMG:*');
+
+// Use the named param syntax insead to supply some optional params.
+cs.registerConnector([type:'oai',
+                      shortcode:'ncmg',
+                      baseuri:'http://www.culturegrid.org.uk/dpp/oai',
+                      setname:'PN:NCMG:*',
+                      prefix:'pnds_dcap_raw',
+                      connector:'OAIConnector',
+                      maxbatch:100]);
+
 
 
 println(cs.listConnectors());
