@@ -78,8 +78,6 @@ class OAIConnector {
         }
       }
     }
-
-    db.agents.save(oai_connector_info);
   }
 
   def fetchOAIPage(oai_endpoint, 

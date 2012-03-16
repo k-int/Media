@@ -1,0 +1,4 @@
+mongo frbr <<!!
+db.work.find({identifier:'http://media.culturegrid.org.uk/mediaLibrary/NCMG/BLDIDHH002638.jpg'});
+!!
+
