@@ -11,12 +11,12 @@ git clone git@github.com:k-int/AggregatorCore.git
 git clone git@github.com:k-int/Media.git
 
 
-cd ~/src/aggregator
+cd ~/src/AggregatorCore
 git checkout release
 git pull
-cd ~/src/aggregator/HandlerRegistry
+cd ~/src/AggregatorCore/HandlerRegistry
 grails prod war
-cd ~/src/aggregator/repository
+cd ~/src/AggregatorCore/repository
 grails prod war
 
 cp ~/src/AggregatorCore/repository/target/repository-0.1.war ~/apache-tomcat/webapps/repository.war
