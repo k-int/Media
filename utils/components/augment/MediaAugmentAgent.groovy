@@ -34,7 +34,8 @@ println("Monitor starting after ${System.currentTimeMillis() - starttime}");
 monitor.iterateLatest(db,'work', -1) { jsonobj ->
   
   println("Process [${reccount++}] ${jsonobj._id}");
-  println("Fetch image from : ${jsonobj.expressions[0].manifestations[0].uri}}");
+  def remote_image_url = jsonobj.expressions[0].manifestations[0].uri
+  println("Fetch image from : ${remote_image_url}");
  
 
   // def writer = new StringWriter()
@@ -49,14 +50,33 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
   //   'dc:title'(jsonobj.label)
   // }
 
-  def item_record = [:]
-  item_record._id = new org.bson.types.ObjectId();
+
+  println("Checking for any existing items where workId matches");
+  def item_record = null;
+  item_record = db.item.findOne(workId:jsonobj._id);
+  if ( item_record == null ) {
+    println("Create new item record");
+    item_record = [:]
+    item_record._id = new org.bson.types.ObjectId();
+  }
+  else {
+    println("update existing item record");
+  }
+
+  item_record.originalSource = [type:'external',uri:remote_image_url]
   item_record.workId = jsonobj._id;
   item_record.workflowType = 'master'
   item_record.mimeType = 'application/jpg'
+
+  // Read the remote image file into the local file
+  def output_filename = "${image_repo_dir}/${item_record._id.toString()}"
+  def out_file = new FileOutputStream(output_filename)
+  def out_stream = new BufferedOutputStream(out_file)
+  out_stream << new URL(jsonobj.expressions[0].manifestations[0].uri).openStream()
+  out_stream.close()
   // db.item.save(item_record);
 
-  println("New item has id ${item_record._id}");
+  println("New item has id ${item_record._id} and saved in ${output_filename}");
 
   // def result = writer.toString();
   // tse.removeGraph("urn:xcri:course:${jsonobj._id}");
