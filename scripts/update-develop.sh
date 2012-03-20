@@ -3,6 +3,10 @@
 cd /home/media/apache-tomcat/bin
 # ./shutdown sh
 
+cd /home/media/apache-tomcat/webapps
+rm -Rf repository*
+rm -Rf HandlerRegistry*
+
 cd /home/media
 rm -Rf src
 mkdir src

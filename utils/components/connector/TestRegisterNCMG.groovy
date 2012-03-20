@@ -20,12 +20,12 @@ cs.removeAll();
 // cs.registerOAIConnector('ncmg','http://www.culturegrid.org.uk/dpp/oai','pnds_dcap_raw','PN:NCMG:*');
 
 // Use the named param syntax insead to supply some optional params.
-cs.registerConnector([type:'oai',
+cs.registerConnector([
+                      connector:'OAIConnector',
                       shortcode:'ncmg',
                       baseuri:'http://www.culturegrid.org.uk/dpp/oai',
                       setname:'PN:NCMG:*',
                       prefix:'pnds_dcap_raw',
-                      connector:'OAIConnector',
                       maxbatch:100]);
 
 

@@ -11,8 +11,7 @@ class ConnectorSubsystem {
 
   def registerOAIConnector(shortcode, baseuri, prefix='oai_dc', setname=null, un=null, pw=null) {
     println("registerRemoteOAIRepository ${baseuri}");
-    registerConnector([type:'oai',
-                       shortcode:shortcode, 
+    registerConnector([shortcode:shortcode, 
                        baseuri:baseuri,
                        setname:setname, 
                        prefix:prefix, 
@@ -22,7 +21,6 @@ class ConnectorSubsystem {
   }
 
   def registerConnector(Map params) {
-    // println("type=${params.type}, shortcode=${params.shortcode}, params=${params}");
     println("Looking up existing connector with shortcode ${params.shortcode}");
     def existing_entry = db.connectors.findOne(shortcode:params.shortcode)
     if ( existing_entry ) {

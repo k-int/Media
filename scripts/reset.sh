@@ -4,7 +4,11 @@
 # Clear down mongo
 
 # mongo <<!!!
+# show dbs
 # use xcri
+# show collections
+# db.aggregations.find({});
+# db.aggregations.remove({});
 # db.dropDatabase()
 # !!!
 
