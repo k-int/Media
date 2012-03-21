@@ -128,6 +128,13 @@ def createSecureCopy(db,image_repo_dir, work, original_item) {
   // steg hide item identifier
   steg.hide(new_item_id,  new_file_name);
 
+  embedXMP(new_item_id,'ownnn',new_file_name);
+
   // save
   db.item.save(new_item);
+}
+
+def embedXMP(identifier,owner,target) {
+  ExivMetadataInterface emi = new ExivMetadataInterface();
+  emi.embed(identifier,owner,target);
 }
