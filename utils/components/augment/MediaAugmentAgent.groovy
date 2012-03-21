@@ -53,7 +53,7 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
 
   println("Checking for any existing items where workId matches");
   def item_record = null;
-  item_record = db.item.findOne(workId:jsonobj._id);
+  item_record = db.item.findOne(workId:jsonobj._id, workflowType:'original');
   if ( item_record == null ) {
     println("Create new item record");
     item_record = [:]
@@ -65,7 +65,7 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
 
   item_record.originalSource = [type:'external',uri:remote_image_url]
   item_record.workId = jsonobj._id;
-  item_record.workflowType = 'master'
+  item_record.workflowType = 'original'
   item_record.mimeType = 'application/jpg'
 
   // Read the remote image file into the local file
@@ -74,7 +74,9 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
   def out_stream = new BufferedOutputStream(out_file)
   out_stream << new URL(jsonobj.expressions[0].manifestations[0].uri).openStream()
   out_stream.close()
-  // db.item.save(item_record);
+  db.item.save(item_record);
+
+  createSecureCopy(jsonobj, item_record);
 
   println("New item has id ${item_record._id} and saved in ${output_filename}");
 
@@ -85,3 +87,12 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
 }
 
 println("Completed after ${reccount} records in ${System.currentTimeMillis() - starttime}ms");
+
+def createSecureCopy(work, original_item) {
+  println("Create secure copy from original...");
+
+  // Copy
+  // Augment metadata
+  // steg hide item identifier
+  // save
+}
