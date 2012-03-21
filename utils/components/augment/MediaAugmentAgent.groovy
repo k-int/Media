@@ -73,6 +73,7 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
   item_record.workflowType = 'original'
   item_record.mimeType = 'application/jpg'
   item_record.pathInStore = output_filename
+  item_record.createDate = System.currentTimeMillis();
 
   // Read the remote image file into the local file
   def out_file = new FileOutputStream(output_filename)
@@ -81,7 +82,7 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
   out_stream.close()
   db.item.save(item_record);
 
-  createSecureCopy(image_repo_dir, jsonobj, item_record);
+  createSecureCopy(db,image_repo_dir, jsonobj, item_record);
 
   println("New item has id ${item_record._id} and saved in ${output_filename}");
 
@@ -101,10 +102,17 @@ println("Completed after ${reccount} records in ${System.currentTimeMillis() - s
  *  Add the id of the image to the exif and the XMP metadata
  *  Create the new item
  */ 
-def createSecureCopy(image_repo_dir, work, original_item) {
+def createSecureCopy(db,image_repo_dir, work, original_item) {
 
   def new_item_id = new org.bson.types.ObjectId();
   def new_file_name = "${image_repo_dir}/${new_item_id}"
+
+  def new_item = [:]
+  new_item._id = new_item_id
+  new_item.workId = work._id;
+  new_item.workflowType = 'SecureCopy'
+  new_item.createDate = System.currentTimeMillis();
+  new_item.pathInStore = new_file_name
 
   println("Create secure copy from original... New item id is ${new_item_id}, store location will be ${new_file_name}");
 
@@ -121,4 +129,5 @@ def createSecureCopy(image_repo_dir, work, original_item) {
   steg.hide(new_item_id,  new_file_name);
 
   // save
+  db.item.save(new_item);
 }

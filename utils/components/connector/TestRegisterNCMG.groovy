@@ -28,8 +28,6 @@ cs.registerConnector([
                       prefix:'pnds_dcap_raw',
                       maxbatch:100]);
 
-
-
 println(cs.listConnectors());
 
 cs.syncRepository('ncmg');
