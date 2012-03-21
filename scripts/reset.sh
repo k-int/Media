@@ -3,14 +3,20 @@
 
 # Clear down mongo
 
-# mongo <<!!!
-# show dbs
+mongo <<!!!
+show dbs
+use frbr
+db.dropDatabase()
+use media_rcs
+db.dropDatabase()
+use oda
+db.dropDatabase()
 # use xcri
 # show collections
 # db.aggregations.find({});
 # db.aggregations.remove({});
 # db.dropDatabase()
-# !!!
+!!!
 
 # Clear down ES indexes
 # curl -XDELETE 'http://localhost:9200/courses/course/_query?q=*:*'
