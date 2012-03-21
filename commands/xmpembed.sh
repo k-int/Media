@@ -11,3 +11,6 @@ echo Print values from xmp
 exiv2 -PX /home/media/media/images/4f69f64f8f4a2936a2512c8c
 exiv2 -PXxgklnycv /home/media/media/images/4f69f64f8f4a2936a2512c8c > t
 
+echo Trivial list key:value
+exiv2 -PXkv /home/media/media/images/4f69f64f8f4a2936a2512c8c
+

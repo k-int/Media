@@ -24,7 +24,7 @@ class ExivMetadataInterface {
    */
   def extract(file) {
     println("extract XMP from ${file}");
-    def process = "exiv2".execute()
+    def process = "exiv2 -PXkv ${file}".execute()
     process.in.eachLine { line -> 
       println line 
     }
