@@ -13,11 +13,14 @@ def starttime = System.currentTimeMillis();
 println("MEDIA Augment/Enrich Startup.. Initialising at ${starttime}");
 
 def monitor = new RepoMonitor();
-def tse = new TripleStoreService();
 def reccount = 0;
 
 println("initialise triple store");
+def tse = new TripleStoreService();
 tse.init();
+
+println("Initialise steganogoraphy component (steghide)");
+def steg = new SteghideStegHandler();
 
 println("Connect to mongo");
 def mongo = new com.gmongo.GMongo()
@@ -63,22 +66,26 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
     println("update existing item record");
   }
 
+  def output_filename = "${image_repo_dir}/${item_record._id.toString()}"
+
   item_record.originalSource = [type:'external',uri:remote_image_url]
   item_record.workId = jsonobj._id;
   item_record.workflowType = 'original'
   item_record.mimeType = 'application/jpg'
+  item_record.pathInStore = output_filename
 
   // Read the remote image file into the local file
-  def output_filename = "${image_repo_dir}/${item_record._id.toString()}"
   def out_file = new FileOutputStream(output_filename)
   def out_stream = new BufferedOutputStream(out_file)
   out_stream << new URL(jsonobj.expressions[0].manifestations[0].uri).openStream()
   out_stream.close()
   db.item.save(item_record);
 
-  createSecureCopy(jsonobj, item_record);
+  createSecureCopy(image_repo_dir, jsonobj, item_record);
 
   println("New item has id ${item_record._id} and saved in ${output_filename}");
+
+  println("*complete*");
 
   // def result = writer.toString();
   // tse.removeGraph("urn:xcri:course:${jsonobj._id}");
@@ -88,11 +95,30 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
 
 println("Completed after ${reccount} records in ${System.currentTimeMillis() - starttime}ms");
 
-def createSecureCopy(work, original_item) {
-  println("Create secure copy from original...");
+/**
+ *  Create a copy of the original item.
+ *  Steg hide the ID of the new item in the image itself
+ *  Add the id of the image to the exif and the XMP metadata
+ *  Create the new item
+ */ 
+def createSecureCopy(image_repo_dir, work, original_item) {
 
-  // Copy
+  def new_item_id = new org.bson.types.ObjectId();
+  def new_file_name = "${image_repo_dir}/${new_item_id}"
+
+  println("Create secure copy from original... New item id is ${new_item_id}, store location will be ${new_file_name}");
+
+  // Copy....
+  def copy_cmd = "cp ${original_item.pathInStore} ${new_file_name}"
+  println("copy: ${copy_cmd}");
+  def process = copy_cmd.execute()
+
+  def steg = new SteghideStegHandler();
+
   // Augment metadata
+
   // steg hide item identifier
+  steg.hide(new_item_id,  new_file_name);
+
   // save
 }
