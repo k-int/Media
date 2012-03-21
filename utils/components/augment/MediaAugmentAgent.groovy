@@ -10,7 +10,7 @@
 ])
 
 def starttime = System.currentTimeMillis();
-println("Startup.. Initialising at ${starttime}");
+println("MEDIA Augment/Enrich Startup.. Initialising at ${starttime}");
 
 def monitor = new RepoMonitor();
 def tse = new TripleStoreService();
