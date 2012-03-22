@@ -30,20 +30,20 @@ class IMWatermarkInterface {
 
     def wm_cmd_arr = "composite -tile - ${image_file_name} ${image_file_name}"
 
-    println("${conv_cmd_arr} | ${wm_cmd_arr}");
+    // println("${conv_cmd_arr} | ${wm_cmd_arr}");
 
     def conv_proc = conv_cmd_arr.execute()
     def wm_proc = wm_cmd_arr.execute();
 
-    println("${conv_proc} | ${wm_proc}");
+    // println("${conv_proc} | ${wm_proc}");
 
     conv_proc | wm_proc
 
     wm_proc.waitFor()
 
-    println "wm return code: ${ wm_proc.exitValue()}"
-    println "wm stderr: ${wm_proc.err.text}"
-    println "wm stdout: ${wm_proc.in.text}"
+    // println "wm return code: ${ wm_proc.exitValue()}"
+    // println "wm stderr: ${wm_proc.err.text}"
+    // println "wm stdout: ${wm_proc.in.text}"
     // process.in.eachLine { line -> 
     //   println line 
     // }

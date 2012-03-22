@@ -82,7 +82,11 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
   out_stream.close()
   db.item.save(item_record);
 
-  createSecureCopy(db,image_repo_dir, jsonobj, item_record);
+  println("Create public secure copy");
+  createSecureCopy(db,image_repo_dir, jsonobj, item_record, 'SecureCopy', 'MediaProjectOwner');
+
+  println("Create thumbnail");
+  createSecureCopy(db,image_repo_dir, jsonobj, item_record, 'Thumbnail', 'MediaProjectOwner','140x140>');
 
   println("New item has id ${item_record._id} and saved in ${output_filename}");
 
@@ -102,7 +106,7 @@ println("Completed after ${reccount} records in ${System.currentTimeMillis() - s
  *  Add the id of the image to the exif and the XMP metadata
  *  Create the new item
  */ 
-def createSecureCopy(db,image_repo_dir, work, original_item) {
+def createSecureCopy(db,image_repo_dir, work, original_item, workflowType, owner, resize=null) {
 
   def new_item_id = new org.bson.types.ObjectId();
   def new_file_name = "${image_repo_dir}/${new_item_id}"
@@ -110,7 +114,7 @@ def createSecureCopy(db,image_repo_dir, work, original_item) {
   def new_item = [:]
   new_item._id = new_item_id
   new_item.workId = work._id;
-  new_item.workflowType = 'SecureCopy'
+  new_item.workflowType = workflowType
   new_item.createDate = System.currentTimeMillis();
   new_item.pathInStore = new_file_name
 
@@ -121,18 +125,25 @@ def createSecureCopy(db,image_repo_dir, work, original_item) {
   println("copy: ${copy_cmd}");
   def process = copy_cmd.execute()
 
-  def steg = new SteghideStegHandler();
-
   // Augment metadata
+
+  // Resize
+  if ( resize ) {
+    println("Resize...");
+    IMRezizeInterface.resize(new_file_name, resize);
+  }
+
 
   // Watermark
   println("watermark...");
   IMWatermarkInterface.watermark(new_file_name, 'MEDIA');
 
   // steg hide item identifier
+  def steg = new SteghideStegHandler();
   steg.hide(new_item_id,  new_file_name);
 
-  embedXMP(new_item_id,'ownnn',new_file_name);
+  // Embed metadata
+  embedXMP(new_item_id,owner,new_file_name);
 
   // save
   db.item.save(new_item);

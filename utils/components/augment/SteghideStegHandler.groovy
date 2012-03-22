@@ -7,7 +7,7 @@ class SteghideStegHandler {
    */
   def hide(identifier, filepath) {
 
-    listFile(filepath);
+    // listFile(filepath);
 
     // Create a file containing the identifier
     def identifier_filename = "${filepath}.stegid"
@@ -18,7 +18,7 @@ class SteghideStegHandler {
     println("embed ${identifier_filename} in ${filepath}");
     
     def steg_cmd = "steghide embed -v -ef ${identifier_filename} -p media -cf ${filepath}"
-    println("run ${steg_cmd}");
+    // println("run ${steg_cmd}");
     def process = steg_cmd.execute()
 
     process.err.eachLine { line ->
@@ -29,7 +29,7 @@ class SteghideStegHandler {
       println line 
     }
 
-    listFile(filepath);
+    // listFile(filepath);
 
     // May try process.withWriter { writer -> <cr> writer << 'test text' }
     // identifier_file.delete();
