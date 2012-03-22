@@ -125,6 +125,10 @@ def createSecureCopy(db,image_repo_dir, work, original_item) {
 
   // Augment metadata
 
+  // Watermark
+  println("watermark...");
+  IMWatermarkInterface.watermark(new_file_name, 'MEDIA');
+
   // steg hide item identifier
   steg.hide(new_item_id,  new_file_name);
 
