@@ -6,7 +6,9 @@
   @Grab(group='org.apache.httpcomponents', module='httpmime', version='4.1.2'),
   @Grab(group='com.gmongo', module='gmongo', version='0.9.2'),
   @Grab(group='org.apache.httpcomponents', module='httpclient', version='4.0'),
-  @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.5.0')
+  @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.5.0'),
+  @Grab(group='org.elasticsearch', module='elasticsearch', version='0.19.0.RC3'),
+  @Grab(group='org.elasticsearch', module='elasticsearch-lang-groovy', version='1.1.0')
 ])
 
 def starttime = System.currentTimeMillis();
@@ -21,6 +23,8 @@ tse.init();
 
 println("Initialise steganogoraphy component (steghide)");
 def steg = new SteghideStegHandler();
+
+def esclient = init();
 
 println("Connect to mongo");
 def mongo = new com.gmongo.GMongo()
@@ -81,6 +85,13 @@ monitor.iterateLatest(db,'work', -1) { jsonobj ->
   out_stream << new URL(jsonobj.expressions[0].manifestations[0].uri).openStream()
   out_stream.close()
   db.item.save(item_record);
+
+  def esent = [:]
+  esent._id = jsonobj._id;
+  esent.title = jsonobj.title;
+  esent.description = jsonobj.description;
+  esent.identifier = jsonobj.identifier;
+  createESEntry(esclient, esent);
 
   println("Create public secure copy");
   createSecureCopy(db,image_repo_dir, jsonobj, item_record, 'SecureCopy', 'MediaProjectOwner');
@@ -152,4 +163,40 @@ def createSecureCopy(db,image_repo_dir, work, original_item, workflowType, owner
 def embedXMP(identifier,owner,target) {
   ExivMetadataInterface emi = new ExivMetadataInterface();
   emi.embed(identifier,owner,target);
+}
+
+def createESEntry(esclient, entry) {
+  try {
+    def future = esclient.index {
+      index "media"
+      type "work"
+      id entry._id
+      source entry
+    }
+  }
+  catch ( Exception e ) {
+    e.printStackTrace();
+  }
+  finally {
+  }
+
+}
+
+
+def init() {
+  Object eswrapper = new ESWrapperService();
+  eswrapper.init();
+
+  org.elasticsearch.groovy.node.GNode esnode = eswrapper.getNode()
+  org.elasticsearch.groovy.client.GClient esclient = esnode.getClient()
+
+  // Get hold of an index admin client
+  org.elasticsearch.groovy.client.GIndicesAdminClient index_admin_client = new org.elasticsearch.groovy.client.GIndicesAdminClient(esclient);
+
+  // Create an index if none exists
+  def future = index_admin_client.create {
+    index 'media'
+  }
+
+  esclient
 }

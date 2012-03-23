@@ -3,3 +3,5 @@
 
 For elasticsearch, after coping init.d file, remember to run update-rc.d elasticsearch defaults
 
+
+http://localhost:9200/media/_search?q=science&pretty=true
