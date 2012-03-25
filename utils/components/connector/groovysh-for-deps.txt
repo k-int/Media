@@ -1,0 +1,12 @@
+25-Mar-2012 20:00:07 java.util.prefs.FileSystemPreferences$2 run
+INFO: Created user preferences directory.
+Groovy Shell (1.7.10, JVM: 1.6.0_26)
+Type 'help' or '\h' for help.
+----------------------------------------------------------------------------------------------------------------------------------------
+groovy:000> groovy.grape.Grape.grab([group:'org.apache.httpcomponents', module:'httpmime', version:'4.1.2']);
+===> null
+groovy:000> groovy.grape.Grape.grab([group:'org.apache.httpcomponents', module:'httpclient', version:'4.0']);  
+===> null
+groovy:000> groovy.grape.Grape.grab([group:'org.codehaus.groovy.modules.http-builder', module:'http-builder', version:'0.5.0']);
+===> null
+

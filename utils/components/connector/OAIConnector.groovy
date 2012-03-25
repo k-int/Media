@@ -175,7 +175,7 @@ class OAIConnector {
         }
 
         response.failure = { resp ->
-          log.error("Failure - ${resp}");
+          log.error("Failure attempting to deposit record - ${resp}");
         }
       }
     }
