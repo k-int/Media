@@ -39,9 +39,15 @@ class ExivMetadataInterface {
                     'xmlns:media' : 'http://k-int.com/ns/media') {
       xml.'rdf:RDF'() {
         xml.'rdf:Description'('rdf:about':"uri:media:${identifier}") {
-          xml.'xmp:CreatorTool'('MEDIA Project XMP Metadata Embedding Agent')
-          xml.'media:owner'("http://media/owner/${owner}")
-          xml.'media:license'("http://media/license/${identifier}")
+          xml.'xmp:CreatorTool'() {
+            mkp.yield('MEDIA Project XMP Metadata Embedding Agent')
+          }
+          xml.'media:owner'() {
+            mkp.yield("http://media/owner/${owner}")
+          }
+          xml.'media:license'() {
+            mkp.yield("http://media/license/${identifier}")
+          }
         }
       }
     }

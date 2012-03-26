@@ -27,6 +27,7 @@ echo clear db
 mysql -u k-int -pk-int Aggr3Live <<!!!
 use Aggr3Live;
 drop table if exists resource;
+drop table if exists setting;
 drop table if exists event_handler;
 drop table if exists deposit_event;
 drop table if exists identifier_instance;
