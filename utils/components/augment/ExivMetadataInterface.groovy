@@ -30,9 +30,28 @@ class ExivMetadataInterface {
     }
   }
 
+  def makeXMPFile2(identifier,owner,xmpfile_name) {
+    def xml = new groovy.xml.StreamingMarkupBuilder()
+    xml.bind {
+      mkp.declareNamespace( x: 'adobe:ns:meta/' )
+      mkp.declareNamespace( rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' )
+      mkp.declareNamespace( xmp: 'http://ns.adobe.com/xap/1.0/' )
+      mkp.declareNamespace( media: 'http://k-int.com/ns/media' ) 
+      'x:xmpmeta' {
+        'rdf:Description'('rdf:about':"uri:media:${identifier}") {
+          'xmp:CreatorTool'('MEDIA Project XMP Metadata Embedding Agent')
+          'media:owner'("http://media/owner/${owner}")
+          'media:license'("http://media/license/${identifier}")
+        }
+      }
+    }
+    new File(xmpfile_name) << xml.toString()
+  }
+
   def makeXMPFile(identifier,owner,xmpfile_name) {
     def writer = new StringWriter()
     def xml = new MarkupBuilder(writer)
+
     xml.'x:xmpmeta'('xmlns:x': 'adobe:ns:meta/', 
                     'xmlns:rdf' : 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                     'xmlns:xmp' : 'http://ns.adobe.com/xap/1.0/',
@@ -53,4 +72,5 @@ class ExivMetadataInterface {
     }
     new File(xmpfile_name) << writer.toString();
   }
+
 }
