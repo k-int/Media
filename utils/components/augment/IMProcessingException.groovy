@@ -1,3 +1,5 @@
+package com.k_int.media.augment;
+
 class IMProcessingException extends RuntimeException
 {
     public IMProcessingException(String message, Throwable cause)

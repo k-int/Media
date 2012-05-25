@@ -1,3 +1,5 @@
+package com.k_int.media.augment;
+
 class IMRezizeInterface {
   
   /**
@@ -37,9 +39,8 @@ class IMRezizeInterface {
   * 
   * @param ignore_aspect_ratio  Boolean     defines if the image should be distorted to fit the specified dimensions exactly (true), or scaled to fit WITHIN the dimensions (false)
   * 
-  * REQUIRED FOR WINDOWS DEPLOYMENT
   * @param imagemagick_abs_path Imagemagick absolute path is required to avoid confusion between Imagemagick convert and Microsoft's convert 
-  *                             (for non windows this value can be null). NOTE: All occurrences of '\' must be escaped. Value should end with '\\'
+  *                             NOTE: All occurrences of '\' must be escaped. Value should end with '\\'
   *                             
   * @throws IMProcessingException
   */
@@ -103,12 +104,12 @@ class IMRezizeInterface {
        
        def resize_cmd = resize_cmd_arr.execute()
        
+       def proc_response = resize_cmd.waitFor()
+       
        if(resize_cmd.err.text)
        {
            throw new IMProcessingException(resize_cmd.err.text)
        }
-       
-       def proc_response = resize_cmd.waitFor()
    }
  }
 }

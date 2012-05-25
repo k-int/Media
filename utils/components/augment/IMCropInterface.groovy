@@ -1,3 +1,5 @@
+package com.k_int.media.augment;
+
 class IMCropInterface {
   
   /**
@@ -12,9 +14,8 @@ class IMCropInterface {
   * @param bottom               the number of pixels to shave off the bottom of the image
   * @param left                 the number of pixels to shave off the left of the image
   * 
-  * REQUIRED FOR WINDOWS DEPLOYMENT
   * @param imagemagick_abs_path Imagemagick absolute path is required to avoid confusion between Imagemagick convert and Microsoft's convert 
-  *                             (for non windows this value can be null). NOTE: All occurrences of '\' must be escaped. Value should end with '\\'
+  *                             NOTE: All occurrences of '\' must be escaped. Value should end with '\\'
   *                             
   * @throws IMProcessingException
   */
@@ -48,11 +49,11 @@ class IMCropInterface {
    
    def crop_cmd = crop_cmd_arr.execute()
    
+   crop_cmd.waitFor()
+   
    if(crop_cmd.err.text)
    {
       throw new IMProcessingException(crop_cmd.err.text)
    }
-   
-   crop_cmd.waitFor()
  }
 }
