@@ -1,0 +1,91 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.k-int.media</groupId>
+  <artifactId>media</artifactId>
+  <name>Media</name>
+  <version>1.0.0-SNAPSHOT</version>
+  <url>http://www.k-int.com</url>
+
+  <scm>
+    <connection>scm:git:git://github.com/k-int/Media.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/k-int/Media.git</developerConnection>
+    <url>https://github.com/k-int/Media</url>
+  </scm>
+  
+      <dependencies>
+        <dependency>
+            <groupId>org.codehaus.groovy.maven.runtime</groupId>
+            <artifactId>gmaven-runtime-1.6</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+  
+
+  <build>
+    <plugins>
+      <plugin>
+       <groupId>org.codehaus.groovy.maven</groupId>
+       <artifactId>gmaven-plugin</artifactId>
+       <version>1.0</version>
+        <executions>
+          <execution>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+            <configuration>
+                <sources>
+                    <fileset>
+                        <directory>${pom.basedir}/utils/components/augment</directory>
+                        <includes>
+                            <include>IMCropInterface.groovy</include>
+                            <include>IMRezizeInterface.groovy</include>
+                            <include>IMProcessingException.groovy</include>
+                            <include>IMIdentifyInterface.groovy</include>
+                            <include>IMTiledPyramidInterface.groovy</include>
+                            <!-- <include>**/*.groovy</include> -->
+                        </includes>
+                    </fileset>
+                </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <distributionManagement>
+    <repository>
+      <id>k-int-releases</id>
+      <name>Knowledge Intergation Maven2 Repository</name>
+      <url>dav:http://projects.k-int.com:8081/nexus-webapp-1.4.0/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>k-int-snapshots</id>
+      <name>Knowledge Intergation Maven2 Snapshot Repository</name>
+      <url>dav:http://projects.k-int.com:8081/nexus-webapp-1.4.0/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <!--  <repositories>
+    <repository>
+      <id>K-Int Releases</id>
+      <url>http://projects.k-int.com:8081/nexus-webapp-1.4.0/content/repositories/public</url>
+    </repository>
+  </repositories>-->
+
+
+</project>
