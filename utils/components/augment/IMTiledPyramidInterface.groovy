@@ -48,7 +48,7 @@ class IMTiledPyramidInterface
         
         def geometry = "${width}x${height}"
         
-        def resize_cmd_arr = [  "\"${imagemagick_abs_path}convert\"",
+        def tile_cmd_arr = [  "\"${imagemagick_abs_path}convert\"",
                                 "${input_file_name}",
                                 "-define",
                                 "tiff:tile-geometry=${geometry}",
@@ -56,11 +56,11 @@ class IMTiledPyramidInterface
                                 "${depth}",
                                 "ptif:${output_file_name}"]
 
-        tile_cmd_arr.each{ print "${it} " } /* DEBUG - print out the command we are executing */
+        //tile_cmd_arr.each{ print "${it} " } /* DEBUG - print out the command we are executing */
         
         def tile_cmd = tile_cmd_arr.execute()
         
-        def proc_response = resize_cmd.waitFor()
+        def proc_response = tile_cmd.waitFor()
         
         if(tile_cmd.err.text)
         {

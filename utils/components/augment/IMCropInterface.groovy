@@ -21,7 +21,7 @@ class IMCropInterface {
   */
  static def crop(input_file_name, output_file_name, top, right, bottom, left, imagemagick_abs_path) {
    
-   println("Cropping file ${input_file_name} removing ${top},${right},${bottom},${left} (top,right,bottom,left)");
+   //println("Cropping file ${input_file_name} removing ${top},${right},${bottom},${left} (top,right,bottom,left)");
 
    def image = IMIdentifyInterface.getImageInfo(input_file_name, imagemagick_abs_path)
    
@@ -45,7 +45,7 @@ class IMCropInterface {
                         "${geometry}",
                         "${output_file_name}"]
    
-   crop_cmd_arr.each{ print "${it} " } /* DEBUG - print out the command we are executing */
+   //crop_cmd_arr.each{ print "${it} " } /* DEBUG - print out the command we are executing */
    
    def crop_cmd = crop_cmd_arr.execute()
    

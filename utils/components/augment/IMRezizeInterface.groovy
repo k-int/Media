@@ -6,7 +6,7 @@ class IMRezizeInterface {
    * Embed the identified properties as XMP attributes in the given file.
    */
   static def resize(image_file_name, resize) {
-    println("Resizing file ${image_file_name} to ${resize}");
+    //println("Resizing file ${image_file_name} to ${resize}");
 
     def resize_cmd_arr = ['convert',
                           image_file_name,
@@ -46,7 +46,7 @@ class IMRezizeInterface {
   */
  static def resize(input_file_name, output_file_name, resize_height, resize_width, ignore_aspect_ratio, imagemagick_abs_path) {
    
-   println("Resizing file ${input_file_name} to ${resize_height ? resize_height : 'unspecified'} x ${resize_width ? resize_width : 'unspecified'} (h x w)");
+  // println("Resizing file ${input_file_name} to ${resize_height ? resize_height : 'unspecified'} x ${resize_width ? resize_width : 'unspecified'} (h x w)");
 
    def resize_value
    
@@ -100,7 +100,7 @@ class IMRezizeInterface {
                                "${resize_value}",
                                "${output_file_name}"]
               
-       resize_cmd_arr.each{ print "${it} " } /* DEBUG - print out the command we are executing */
+       //resize_cmd_arr.each{ print "${it} " } /* DEBUG - print out the command we are executing */
        
        def resize_cmd = resize_cmd_arr.execute()
        

@@ -40,7 +40,7 @@ class IMIdentifyInterface
     
     if(identify_file_proc.err.text)
     {
-        println("Error returned whilst looking up details for the file ${image_file_name} : ${identify_file_proc.err.text}")
+        //println("Error returned whilst looking up details for the file ${image_file_name} : ${identify_file_proc.err.text}")
         
         throw new IMProcessingException(identify_file_proc.err.text)
     }
