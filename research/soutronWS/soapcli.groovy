@@ -6,12 +6,19 @@
   // @Grab(group='axis', module='axis', version='1.4'),
   // @Grab(group='javax.activation', module='activation', version='1.1.1'),
   // @Grab( group='javax.mail', module='mail', version='1.4.4')
+  @Grab(group='org.codehaus.groovy.modules', module='groovyws', version='0.5.2')
 ])
 
-import groovy.net.soap.SoapClient
+import groovyx.net.ws.WSClient
 
-def proxy = new SoapClient("http://clientdemo.soutron.net/Library/WebServices/SoutronAPI.svc?wsdl")
-def result = proxy.searchCatalogues("House", // String q
+println("Configure proxy...");
+def proxy = new WSClient("http://clientdemo.soutron.net/Library/WebServices/SoutronAPI.svc?wsdl",this.class.classLoader)
+
+println("Initialize...");
+proxy.initialize()
+
+println("search....");
+def result = proxy.SearchCatalogues("House", // String q
                                     null, // String searchId
                                     null, // String lang
                                     null, // String userId
@@ -28,3 +35,7 @@ def result = proxy.searchCatalogues("House", // String q
                                     null) // String inclDepRec
 
 println("Got result: ${result}");
+
+def r2 = new String(result)
+
+println("Result as string: ${r2}");
