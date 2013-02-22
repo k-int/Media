@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+                  xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" 
+                  xmlns:wsa10="http://www.w3.org/2005/08/addressing" 
+                  xmlns:tns="http://tempuri.org/" 
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" 
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" 
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" 
+                  xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" 
+                  xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" 
+                  xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+                  xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" 
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" 
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+                  xmlns:i0="Soutron.SoutronGlobal.SoutronGlobalApi" 
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+                  name="SoutronAPI" 
+                  targetNamespace="http://tempuri.org/">
+  <wsdl:import namespace="Soutron.SoutronGlobal.SoutronGlobalApi" location="http://clientdemo.soutron.net/Library/WebServices/SoutronAPI.svc?wsdl=wsdl0"/>
+  <wsdl:types/>
+  <wsdl:binding name="soap" type="i0:ISoutronGlobalApi">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetCatalogueBookCover">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/IBaseSoutronGlobalApi/GetCatalogueBookCover" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetThesaurusSuggestion">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/IBaseSoutronGlobalApi/GetThesaurusSuggestion" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTextSuggestion">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/IBaseSoutronGlobalApi/GetTextSuggestion" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/IBaseSoutronGlobalApi/Ping" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCatalogue">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetCatalogue" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchCatalogues">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/SearchCatalogues" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateCatalogueRecord">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/CreateCatalogueRecord" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCataloguesRevision">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetCataloguesRevision" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetListOffices">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetListOffices" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetListLanguages">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetListLanguages" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateUser">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/ValidateUser" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserMembership">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetUserMembership" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUser">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/UpdateUser" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetContentTypes">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetContentTypes" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordTypes">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetRecordTypes" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemOpacs">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetSystemOpacs" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserInfoByName">
+      <soap:operation soapAction="Soutron.SoutronGlobal.SoutronGlobalApi/ISoutronGlobalApi/GetUserInfoByName" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SoutronAPI">
+    <wsdl:port name="soap" binding="tns:soap">
+      <soap:address location="http://clientdemo.soutron.net/Library/WebServices/SoutronAPI.svc/soap"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

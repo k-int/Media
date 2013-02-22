@@ -45,6 +45,7 @@ println("Result class: ${result.dump}")
 println("Result: ${result.body}")
 byte[] bytes = result.body.text().getBytes()
 println(bytes);
+println(new String(bytes));
 // response.httpResponse.statusCode == 200
 // response.soapVersion == SOAPVersion.V1_1
 
